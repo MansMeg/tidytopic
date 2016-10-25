@@ -71,7 +71,7 @@ read_mallet_statefile <-function(state_file, get = "state"){
 #' \code{NULL} if file was written successfully.
 #' 
 #' @export
-write.mallet.statefile <-function(state.object, alpha, beta, state_file){
+write_mallet_statefile <-function(state.object, alpha, beta, state_file){
   # Assert output file
   checkmate::assert_path_for_output(state_file)
   assert_mallet_state_file_name(state_file)

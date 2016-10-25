@@ -20,7 +20,6 @@ rcategorical <- function(p) {
 #'
 #' @param p a vector of (pssoble unnormalized) probabilities.
 #'
-#' @export
 sample_vanilla_lda <- function(doc, type, z, K, D, V, iter, beta, alpha) {
     .Call('tidytopics_sample_vanilla_lda', PACKAGE = 'tidytopics', doc, type, z, K, D, V, iter, beta, alpha)
 }

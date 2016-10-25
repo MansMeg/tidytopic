@@ -77,7 +77,6 @@ int vanilla_lda_sampler(IntegerMatrix type_topic, IntegerMatrix doc_topic, Integ
 //'
 //' @param p a vector of (pssoble unnormalized) probabilities.
 //'
-//' @export
 // [[Rcpp::export]]
 IntegerVector sample_vanilla_lda(IntegerVector doc, IntegerVector type, IntegerVector z, int K, int D, int V, int iter, double beta, double alpha) {
   // Remember OBOE!!!

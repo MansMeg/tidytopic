@@ -7,5 +7,6 @@ test_that(desc="TODO",{
   expect_true(FALSE, info = "setup Travis")
   expect_true(FALSE, info = "setup Coverall")
   expect_true(FALSE, info = "fix github badges")
+  expect_true(FALSE, info = "Cleanup API")
 })
 

@@ -8,10 +8,12 @@ tmp_gz <- file.path(tmp_dir, "sotu_tmp.txt.gz")
 
 test_that(desc="mallet-io",{
   
-  expect_silent(state <- read_mallet_statefile(state_file))
+  expect_silent(capture.output(state <- read_mallet_statefile(state_file)))
   expect_silent(alpha <- read_mallet_statefile(state_file, "alpha"))
   expect_silent(beta <- read_mallet_statefile(state_file, "beta"))
   
+  expect_silent(write_mallet_statefile(state, alpha[1], beta, tmp_gz))
+  unlink(tmp_gz)
   expect_silent(write_mallet_statefile(state, alpha, beta, tmp_gz))
   expect_silent(write_mallet_statefile(state, alpha, beta, tmp_txt))
   

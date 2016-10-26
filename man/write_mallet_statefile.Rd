@@ -4,20 +4,16 @@
 \alias{write_mallet_statefile}
 \title{Write a Mallet state from R}
 \usage{
-write_mallet_statefile(state.object, alpha, beta, state_file)
+write_mallet_statefile(state, alpha, beta, state_file)
 }
 \arguments{
-\item{state.object}{A data.frame in a one-token-per-row format (see \code{tidytext}).
-\code{doc}: Document id as integer, 
-\code{pos}: Position in the document (integer from 1 to length of document), 
-\code{type}: Word type of the token as a factor variable.
-\code{topic}: Topic indicator (as integer)}
+\item{alpha}{a numeric vector of length equal one (uniform prior) or to the number of topics. This is the alpha prior for each topic.}
 
-\item{alpha}{A vector of length equal to the number of topics containing the alpha prior for each topic.}
-
-\item{beta}{A numeric or character element with the beta prior.}
+\item{beta}{A numeric element with the beta prior (single value).}
 
 \item{state_file}{Path to write a mallet state file to (\code{.gz} or \code{.txt} suffix is mandatory).}
+
+\item{tidy_topic_state}{a \code{tidy_topic_state} object in a one-token-per-row format (see \code{tidytext}).}
 }
 \value{
 \code{NULL} if file was written successfully.

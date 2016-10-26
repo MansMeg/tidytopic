@@ -58,42 +58,30 @@ read_mallet_statefile <-function(state_file, type = "state"){
 #' Write a Mallet state from R
 #' 
 #' @param state_file Path to write a mallet state file to (\code{.gz} or \code{.txt} suffix is mandatory).
-#' @param state.object A data.frame in a one-token-per-row format (see \code{tidytext}).
-#' \code{doc}: Document id as integer, 
-#' \code{pos}: Position in the document (integer from 1 to length of document), 
-#' \code{type}: Word type of the token as a factor variable.
-#' \code{topic}: Topic indicator (as integer)
-#' 
-#' @param alpha A vector of length equal to the number of topics containing the alpha prior for each topic. 
-#' @param beta A numeric or character element with the beta prior.
+#' @param tidy_topic_state a \code{tidy_topic_state} object in a one-token-per-row format (see \code{tidytext}).
+#' @param alpha a numeric vector of length equal one (uniform prior) or to the number of topics. This is the alpha prior for each topic. 
+#' @param beta A numeric element with the beta prior (single value).
 #' 
 #' @return 
 #' \code{NULL} if file was written successfully.
 #' 
 #' @export
-write_mallet_statefile <-function(state.object, alpha, beta, state_file){
+write_mallet_statefile <-function(state, alpha, beta, state_file){
   # Assert output file
   checkmate::assert_path_for_output(state_file)
   assert_mallet_state_file_name(state_file)
   
   # Assert state object
-  checkmate::assert_class(state.object, "tbl_df")
-  checkmate::assert_set_equal(names(state.object), c("doc", "pos", "type", "topic"))
-  checkmate::assert_set_equal(class(state.object$type), "factor")
-  checkmate::assert_set_equal(class(state.object$doc), "integer")
-  checkmate::assert_set_equal(class(state.object$pos), "integer")
-  checkmate::assert_set_equal(class(state.object$topic), "integer")
-  K <- length(unique(state.object$topic))
+  checkmate::assert(is.tidy_topic_state(state))
+  K <- length(unique(state$topic))
   
   # Assert alpha prior
-  checkmate::assert(checkmate::check_character(alpha), 
-                    checkmate::check_numeric(alpha))
-  checkmate::assert_numeric(as.numeric(alpha), lower = 0, len = )  
-
+  checkmate::assert(checkmate::check_numeric(alpha, lower = 0, len = 1),
+                    checkmate::check_numeric(alpha, lower = 0, len = K))
+  if(length(alpha) == 1) alpha <- rep(alpha, K) 
+    
   # Assert beta prior
-  checkmate::assert(checkmate::check_character(beta), 
-                    checkmate::check_numeric(beta))
-  checkmate::assert_number(as.numeric(beta), lower = 0)
+  checkmate::assert_number(beta, lower = 0)
 
   # Create connection
   file_suffix <- stringr::str_extract(state_file, "\\.[a-z]+$")
@@ -104,17 +92,23 @@ write_mallet_statefile <-function(state.object, alpha, beta, state_file){
     connection <- file(state_file, "a")
   }
   
+  # Compute pos
+  state <- dplyr::group_by(state, doc)
+  state <- dplyr::mutate(state, pos = row_number())
+  state <- dplyr::ungroup(state)
+  
   cat("#doc source pos typeindex type topic", file = connection, sep = "\n")
-  cat(paste("#alpha :", paste(state.object$alpha, collapse = " "), ""), file = connection, sep = "\n")
-  cat(paste("#beta :", state.object$beta), file = connection, sep = "\n")
-  cat(paste(state.object$state_tbl_df$doc - 1L, 
-            rep(NA, nrow(state.object$state_tbl_df)),
-            state.object$state_tbl_df$pos - 1L,
-            as.integer(state.object$state_tbl_df$type) - 1L,
-            as.character(state.object$state_tbl_df$type), 
-            state.object$state_tbl_df$topic - 1L),
+  cat(paste("#alpha :", paste(alpha, collapse = " "), ""), file = connection, sep = "\n")
+  cat(paste("#beta :", beta), file = connection, sep = "\n")
+  cat(paste(state$doc - 1L, 
+            rep(NA, nrow(state)),
+            state$pos - 1L,
+            as.integer(state$type) - 1L,
+            as.character(state$type), 
+            state$topic - 1L),
       file = connection, sep = "\n")
   close(connection)
+  NULL
 }
 
 #' Assert that \code{file_path} is a valide mallet state file

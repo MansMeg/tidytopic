@@ -12,7 +12,8 @@ Imports:
     dplyr (>= 0.5)
 Suggests:
   testthat,
-  knitr
+  knitr,
+  readr
 LinkingTo:
     Rcpp,
     testthat

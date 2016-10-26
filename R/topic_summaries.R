@@ -12,6 +12,7 @@
 #'
 #' Not all reweighting schemes return a probability (such as KR1, KR2 and relevance)
 #'
+#' If ties in weight/probability, the original order is used.
 #'
 #' @references
 #' Topic and keyword re-ranking for LDA-based topic modeling (2009)
@@ -19,7 +20,7 @@
 #'
 #' @param state A tidy topic model state file
 #' @param j The number of types to return
-#' @param beta Beta hyper parameter. Default is 0 (no smoothing).
+#' @param beta Beta hyper parameter. Default is 0 (no prior smoothing).
 #' @param lambda Relevance weight. Default is 0.6.
 #'
 #' @return
@@ -28,7 +29,7 @@
 #' @examples
 #' # Load the state of the union topic model
 #' load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
-#' w <- type_probability(sotu50, 10)
+#' w <- type_probability(state = sotu50, j = 5, beta = 0.01)
 #'
 #' @export
 type_probability <- function(state, j, beta = 0){
@@ -109,88 +110,92 @@ relevance <- function(state, j, beta = 0, lambda = 0.6){
 # Below are helper functions used in multiple reweighting methods
 
 #' @title Return top j terms by weight
+#' 
 #' @param wttm a weighted tidy type topic matrix
 #' @param j top j types to return (min 1 type)
 top_j_types <- function(wtttm, j){
   checkmate::assert_class(wtttm, "tbl_df")
   checkmate::assert_integerish(j, lower = 1)
   checkmate::assert_subset(names(wtttm), c("p", "topic", "type"))
-  dplyr::ungroup(dplyr::top_n(dplyr::group_by(wtttm, topic), n = j, wt = p))
+  wtttm <- dplyr::group_by(wtttm, topic)
+  wtttm <- dplyr::arrange(wtttm, topic, desc(p))
+  wtttm <- dplyr::mutate(wtttm, rn = row_number())
+  wtttm <- dplyr::top_n(wtttm, n = j, wt = desc(rn))
+  wtttm <- dplyr::mutate(wtttm, rn = NULL)
+  dplyr::ungroup(wtttm)
 }
 
-p_w_given_k <- function(state, beta = 0){
-  library(dplyr)
-
+p_w_given_k <- function(state, beta){
+  # if(beta != 0) stop("beta != 0 is not implemented yet")
+  
   V <- length(levels(state$type))
-  topic_mass <- state %>%
-    group_by(topic) %>%
-    summarise(weight = n()) %>%
-    mutate(weight = weight + beta * V)
-  state %>%
-    group_by(topic, type) %>%
-    summarise(counts = n()) %>%
-    left_join(topic_mass, by = "topic") %>%
-    mutate(p = (counts + beta) / weight, weight = NULL, counts = NULL) %>%
-    ungroup()
+  state <- dplyr::group_by(state, topic) 
+  topic_mass <- dplyr::summarise(state, weight = n())
+  topic_mass <- dplyr::mutate(topic_mass, weight = weight + beta * V)
+
+  state <- dplyr::group_by(state, topic, type) 
+  state <- dplyr::summarise(state, counts = n())
+  state <- dplyr::left_join(state, topic_mass, by = "topic")
+  state <- dplyr::mutate(state, p = (counts + beta) / weight, weight = NULL, counts = NULL)
+  state <- dplyr::ungroup(state)
+  state
 }
 
-p_k_given_w <- function(state, beta = 0){
-  library(dplyr)
-
+p_k_given_w <- function(state, beta){
+  # if(beta != 0) stop("beta != 0 is not implemented yet")
+  
   K <- length(unique(state$topic))
 
-  type_mass <- state %>%
-    group_by(type) %>%
-    summarise(weight = n()) %>%
-    mutate(weight = weight + beta * K)
+  type_mass <- dplyr::summarise(dplyr::group_by(state, type), weight = n())
+  type_mass <- dplyr::mutate(type_mass, weight = weight + beta * K)
 
-  state %>%
-    group_by(topic, type) %>%
-    summarise(counts = n()) %>%
-    left_join(type_mass, by = "type") %>%
-    mutate(p = (counts + beta) / weight, weight = NULL, counts = NULL) %>%
-    ungroup()
+  state <- dplyr::group_by(state, topic, type) 
+  state <- dplyr::summarise(state, counts = n())
+  state <- dplyr::left_join(state, type_mass, by = "type")
+  state <- dplyr::mutate(state, p = (counts + beta) / weight, weight = NULL, counts = NULL)
+  state <- ungroup(state)
+  state
 }
 
-p_wk <- function(state, beta = 0){
-  library(dplyr)
+p_wk <- function(state, beta){
+  # if(beta != 0) stop("beta != 0 is not implemented yet")
 
   V <- length(levels(state$type))
   K <- length(unique(state$topic))
-  total_mass <- state %>%
-    summarise(weight = n()) %>%
-    mutate(weight = weight + beta * K * V)
+  total_mass <- dplyr::summarise(state, weight = n()) 
+  total_mass <- dplyr::mutate(total_mass, weight = weight + beta * K * V)
 
-  state %>%
-    group_by(topic, type) %>%
-    summarise(counts = n()) %>%
-    mutate(p = (counts + beta) / total_mass$weight, counts = NULL) %>%
-    ungroup()
+  state <- dplyr::group_by(state, topic, type)
+  state <- dplyr::summarise(state, counts = n())
+  state <- dplyr::mutate(state, p = (counts + beta) / total_mass$weight, counts = NULL)
+  state <- ungroup(state)
+  state
 }
 
-p_w <- function(state, beta = 0){
-  library(dplyr)
+p_w <- function(state, beta){
+  # if(beta != 0) stop("beta != 0 is not implemented yet")
+  
   V <- length(levels(state$type))
   K <- length(unique(state$topic))
-  total_mass <- state %>%
-    summarise(weight = n()) %>%
-    mutate(weight = weight + beta * K * V)
-  state %>%
-    group_by(type) %>%
-    summarise(counts = n()) %>%
-    mutate(p = (counts + beta * K) / total_mass$weight, counts = NULL)
+  total_mass <- dplyr::summarise(state, weight = n()) 
+  total_mass <- dplyr::mutate(total_mass, weight = weight + beta * K * V)
+  
+  state <- dplyr::summarise(dplyr::group_by(state, type), counts = n())
+  state <- dplyr::mutate(state, p = (counts + beta * K) / total_mass$weight, counts = NULL)
+  state
 }
 
-p_k <- function(state, beta = 0){
-  library(dplyr)
+p_k <- function(state, beta){
+  # if(beta != 0) stop("beta != 0 is not implemented yet")
+
   V <- length(levels(state$type))
   K <- length(unique(state$topic))
-  total_mass <- state %>%
-    summarise(weight = n()) %>%
-    mutate(weight = weight + beta * K * V)
-  state %>%
-    group_by(topic) %>%
-    summarise(counts = n()) %>%
-    mutate(p = (counts + beta * V) / total_mass$weight, counts = NULL)
+  
+  total_mass <- dplyr::summarise(state, weight = n()) 
+  total_mass <- dplyr::mutate(total_mass, weight = weight + beta * K * V)
+  
+  state <- dplyr::summarise(dplyr::group_by(state, topic), counts = n())
+  state <- dplyr::mutate(state, p = (counts + beta * V) / total_mass$weight, counts = NULL)
+  state
 }
 

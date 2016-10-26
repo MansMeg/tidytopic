@@ -1,6 +1,6 @@
 context("mi/imi")
 
-load(system.file("extdata/sotu50.Rdata", package = "topicmodeltoolbox"))
+load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
 
 test_that(desc="TODO",{
   skip_on_travis()

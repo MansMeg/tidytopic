@@ -13,7 +13,7 @@
 #' \code{beta} returns the beta prior (in character format).
 #' 
 #' @export
-read_mallet_statefile <-function(state_file, get = "state"){
+read_mallet_statefile <-function(state_file, type = "state"){
   checkmate::assert_file_exists(state_file)
   checkmate::assert_choice(type, c("state", "alpha", "beta"))
   assert_mallet_state_file_name(state_file)
@@ -34,12 +34,12 @@ read_mallet_statefile <-function(state_file, get = "state"){
   
   # Read alpha
   alpha <- stringr::str_split(stringr::str_trim(readLines(connection, n = 1)), " ")[[1]]
-  alpha <- alpha[3:length(alpha)]
+  alpha <- as.numeric(alpha[3:length(alpha)])
   if(type == "alpha") {close(connection); return(alpha)}
 
   # Read beta
   beta <- stringr::str_split(stringr::str_trim(readLines(connection, n = 1)), " ")[[1]]
-  beta <- beta[3]
+  beta <- as.numeric(beta[3])
   if(type == "beta") {close(connection); return(beta)}
   close(connection)
   

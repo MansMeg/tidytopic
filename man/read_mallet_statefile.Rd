@@ -4,7 +4,7 @@
 \alias{read_mallet_statefile}
 \title{Read a Mallet state file into R}
 \usage{
-read_mallet_statefile(state_file, get = "state")
+read_mallet_statefile(state_file, type = "state")
 }
 \arguments{
 \item{state_file}{Path to a mallet state file with \code{.gz} or \code{.txt} suffix.}

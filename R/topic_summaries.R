@@ -27,7 +27,7 @@
 #'
 #' @examples
 #' # Load the state of the union topic model
-#' load(system.file("extdata/sotu50.Rdata", package = "topicmodeltoolbox"))
+#' load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
 #' w <- type_probability(sotu50, 10)
 #'
 #' @export

@@ -23,7 +23,7 @@ relevance(state, j, beta = 0, lambda = 0.6)
 
 \item{j}{The number of types to return}
 
-\item{beta}{Beta hyper parameter. Default is 0 (no smoothing).}
+\item{beta}{Beta hyper parameter. Default is 0 (no prior smoothing).}
 
 \item{lambda}{Relevance weight. Default is 0.6.}
 }
@@ -41,11 +41,13 @@ This means that unless \code{beta} is set to 0, the returning probabilities
 will not sum to 1.
 
 Not all reweighting schemes return a probability (such as KR1, KR2 and relevance)
+
+If ties in weight/probability, the original order is used.
 }
 \examples{
 # Load the state of the union topic model
-load(system.file("extdata/sotu50.Rdata", package = "topicmodeltoolbox"))
-w <- type_probability(sotu50, 10)
+load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+w <- type_probability(state = sotu50, j = 5, beta = 0.01)
 
 }
 \references{

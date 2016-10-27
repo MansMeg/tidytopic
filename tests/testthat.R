@@ -1,2 +1,2 @@
 library(testthat)
-test_check("topicmodelsamplers")
+test_check("tidytopics")

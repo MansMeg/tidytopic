@@ -3,15 +3,12 @@
 \name{is.tidy_topic_state}
 \alias{assert_state}
 \alias{assert_state_object}
-\alias{is.tidy_topic_matrix}
 \alias{is.tidy_topic_state}
-\title{Assert that \code{x} is a tidy topic state}
+\title{Assert that \code{x} is a tidy topic state, matrix or array}
 \usage{
 is.tidy_topic_state(x)
 
 assert_state(x)
-
-is.tidy_topic_matrix(x)
 
 assert_state_object(x)
 }
@@ -19,7 +16,7 @@ assert_state_object(x)
 \item{x}{Object to check if it is a valid topic_model_state object}
 }
 \description{
-Assert that \code{x} is a tidy topic state
+Assert that \code{x} is a tidy topic state, matrix or array
 }
 \details{
 The tidy topic state is a \code{tibble} dataset with at least the variables

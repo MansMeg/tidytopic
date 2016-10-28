@@ -3,6 +3,8 @@ context("General TODO of the package")
 test_that(desc="TODO",{
   skip_on_travis()
   expect_true(FALSE, info = "fix all TODO in documentation")
+  expect_true(FALSE, info = "fix prior in topic_entropy")
+  expect_true(FALSE, info = "fix type_entropy functionality")
   expect_true(FALSE, info = "remove requireNamespace")
   expect_true(FALSE, info = "Add more 'real' tests on calculating relevance and term-score")
   expect_true(FALSE, info = "Fix references and documentation in top terms")

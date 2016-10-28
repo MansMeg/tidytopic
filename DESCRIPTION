@@ -5,7 +5,7 @@ Version: 0.0.4
 Author: Mans Magnusson
 Maintainer: Mans Magnusson <mons.magnusson@gmail.com>
 Description: Package to use for topic modeling in R in the tidy data framework of tidytext, tidyr and dplyr. The packag is based on dplyr data structures to improve performance.
-License: MIT
+License: BSD_2_clause + file LICENSE
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.7),

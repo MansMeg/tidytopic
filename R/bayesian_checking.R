@@ -14,7 +14,7 @@
 #'
 #' @export
 imi <- function(state, w=NULL){
-  requireNamespace(dplyr)
+  requireNamespace("dplyr")
   checkmate::assert(is.tidy_topic_state(state))
   checkmate::assert(checkmate::check_class(w, "tbl_df"),
                     checkmate::check_character(w, null.ok = TRUE))
@@ -75,7 +75,7 @@ imi_group <- function(state, g, w = NULL){
 #'
 #' @export
 mi <- function(state){
-  requireNamespace(dplyr)
+  requireNamespace("dplyr")
   checkmate::assert(is.tidy_topic_state(state))
 
   st <-
@@ -204,7 +204,7 @@ plot_imi_type <- function(true, rep, k){
 #'
 #' @export
 sample_types_given_topic <- function(state){
-  requireNamespace(dplyr)
+  requireNamespace("dplyr")
 
   checkmate::assert(is.tidy_topic_state(state))
 

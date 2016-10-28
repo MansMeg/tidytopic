@@ -57,9 +57,10 @@ read_mallet_statefile <-function(state_file, type = "state"){
 
 #' Write a Mallet state from R
 #' 
-#' @param state_file a \code{tidy_topic_state} object in a one-token-per-row format (see \code{tidytext}).
+#' @param state a \code{tidy_topic_state} object in a one-token-per-row format (see \code{tidytext}).
 #' @param alpha a numeric vector of length equal one (uniform prior) or to the number of topics. This is the alpha prior for each topic. 
 #' @param beta A numeric element with the beta prior (single value).
+#' @param state_file a character string naming a file.
 #' 
 #' @return 
 #' \code{NULL} if file was written successfully.

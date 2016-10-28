@@ -6,7 +6,7 @@ test_that(desc="Probabilistic test",{
   prob <- unnormalized_prob / sum(unnormalized_prob)
   count <- integer(3)
   for(i in 1:10000){
-    x <- topicmodelsamplers:::rcategorical(unnormalized_prob) + 1
+    x <- tidytopics:::rcategorical(unnormalized_prob) + 1
     count[x] <- count[x] + 1
   }
   expect_gt(chisq.test(count, p=prob)$p.value, 0.0001)

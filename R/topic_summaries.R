@@ -6,9 +6,9 @@
 #' \describe{
 #'   \item{\code{type_probability}}{\eqn{p(w|k)} The probability of a type given the topic. The most common weighting scheme.}
 #'   \item{\code{topic_probability}}{\eqn{p(k|w)} The probability of a topic given a term.}
-#'   \item{\code{term_score}}{\eqn{p(w|k)\cdot\frac{p(w|k)}{(\prod p_k(w|k))^{\frac{1}{K}}}} A weighting scheme inspired by tf-idf proposed by Lafferty and Blei (2009).
-#'   \item{\code{relevance}}{\eqn{\log \frac{p(w|k)}{\sum p_k(w)^{1-\lambda}}} A weighting scheme proposed by Sievert and Shirley (2014)}
-#'   \item{\code{n_wk}}{\eqn{n_wk)} Order by number of topic indicators. Give same result as \code{type_probability} but is faster.}
+#'   \item{\code{term_score}}{\eqn{p(w|k) * log(p(w|k) / (\prod p_k(w|k))^(1/K)} A weighting scheme inspired by tf-idf proposed by Lafferty and Blei (2009).}
+#'   \item{\code{relevance}}{\eqn{log(p(w|k)/ (\sum p_k(w)^(1-\lambda))} A weighting scheme proposed by Sievert and Shirley (2014)}
+#'   \item{\code{n_wk}}{\eqn{n_wk} Order by number of topic indicators. Give same result as \code{type_probability} but is faster.}
 #' }
 #'
 #' @details
@@ -22,6 +22,7 @@
 #' 
 #' @references
 #' Blei, D. M., & Lafferty, J. D. (2009). Topic models. Text mining: classification, clustering, and applications, 10(71), 34.
+#' 
 #' Sievert, C., & Shirley, K. E. (2014). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).
 #'
 #' @param x A \code{\link[as.tidy_topic_state]{tidy_topic_state}}

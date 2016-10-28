@@ -4,11 +4,12 @@
 \alias{top_j_types}
 \title{Return top j terms by weight}
 \usage{
-top_j_types(wtttm, j)
+top_j_types(x, j)
 }
 \arguments{
-\item{j}{top j types to return (min 1 type)}
+\item{x}{a weighted tidy type topic matrix}
 
-\item{wttm}{a weighted tidy type topic matrix}
+\item{j}{top j types to return (min 1 type)}
 }
+\keyword{internal}
 

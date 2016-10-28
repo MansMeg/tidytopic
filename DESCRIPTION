@@ -9,7 +9,8 @@ License: MIT
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.7),
-    dplyr (>= 0.5)
+    dplyr (>= 0.5),
+    checkmate
 Suggests:
   testthat,
   knitr,

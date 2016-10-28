@@ -1,6 +1,6 @@
 context("is.tidy_topic_state")
 
-load(system.file("extdata/sotu50.Rdata", package = "topicmodeltoolbox"))
+load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
 
 test_that(desc="imi",{
   state <- dplyr::mutate(sotu50, pos = NULL)

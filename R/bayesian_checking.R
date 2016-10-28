@@ -1,23 +1,20 @@
 #' Calculate IMI
 #'
-#' @description
+#' @description 
 #' Function to calculate instantanueous mutual information for types for a given topic.
-#'
 #' See reference for details.
 #'
 #' @references
 #' Mimno, D. and Blei, D. Bayesian Checking for Topic Models
 #'
 #' @param state a tidy_topic_state object
-#' @param k The topic to calculate IMI
+#' @param g groups TODO
 #' @param w An ungrouped tbl_df with types and topics to calculate IMI for. Default is NULL.
-#'
-#' @details
 #'
 #'
 #' @export
 imi <- function(state, w=NULL){
-  library(dplyr)
+  requireNamespace(dplyr)
   checkmate::assert(is.tidy_topic_state(state))
   checkmate::assert(checkmate::check_class(w, "tbl_df"),
                     checkmate::check_character(w, null.ok = TRUE))
@@ -78,7 +75,7 @@ imi_group <- function(state, g, w = NULL){
 #'
 #' @export
 mi <- function(state){
-  library(dplyr)
+  requireNamespace(dplyr)
   checkmate::assert(is.tidy_topic_state(state))
 
   st <-
@@ -144,7 +141,7 @@ mi_deviance <- function(true, rep){
   checkmate::assert(nrow(true) < nrow(rep))
 
   group_by(rep, topic) %>%
-    summarise(mean = mean(mi), sd = sd(mi)) %>%
+    summarise(mean = mean(mi), sd = stats::sd(mi)) %>%
     full_join(true, by = "topic") %>%
     transmute(deviance = (mi - mean) / sd)
 }
@@ -207,7 +204,7 @@ plot_imi_type <- function(true, rep, k){
 #'
 #' @export
 sample_types_given_topic <- function(state){
-  library(dplyr)
+  requireNamespace(dplyr)
 
   checkmate::assert(is.tidy_topic_state(state))
 

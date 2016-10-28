@@ -14,15 +14,11 @@ imi_group(state, g, w = NULL)
 
 \item{w}{An ungrouped tbl_df with types and topics to calculate IMI for. Default is NULL.}
 
-\item{k}{The topic to calculate IMI}
+\item{g}{groups TODO}
 }
 \description{
 Function to calculate instantanueous mutual information for types for a given topic.
-
 See reference for details.
-}
-\details{
-
 }
 \references{
 Mimno, D. and Blei, D. Bayesian Checking for Topic Models

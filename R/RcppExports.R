@@ -18,7 +18,15 @@ rcategorical <- function(p) {
 #' @description
 #' Sample a couple of iterations using simple LDA
 #'
-#' @param p a vector of (pssoble unnormalized) probabilities.
+#' @param doc TODO
+#' @param type TODO
+#' @param z TODO
+#' @param K TODO
+#' @param D TODO
+#' @param V TODO
+#' @param iter TODO
+#' @param alpha TODO
+#' @param beta TODO
 #'
 sample_vanilla_lda <- function(doc, type, z, K, D, V, iter, beta, alpha) {
     .Call('tidytopics_sample_vanilla_lda', PACKAGE = 'tidytopics', doc, type, z, K, D, V, iter, beta, alpha)

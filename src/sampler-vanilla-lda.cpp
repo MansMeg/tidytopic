@@ -75,7 +75,15 @@ int vanilla_lda_sampler(IntegerMatrix type_topic, IntegerMatrix doc_topic, Integ
 //' @description
 //' Sample a couple of iterations using simple LDA
 //'
-//' @param p a vector of (pssoble unnormalized) probabilities.
+//' @param doc TODO
+//' @param type TODO
+//' @param z TODO
+//' @param K TODO
+//' @param D TODO
+//' @param V TODO
+//' @param iter TODO
+//' @param alpha TODO
+//' @param beta TODO
 //'
 // [[Rcpp::export]]
 IntegerVector sample_vanilla_lda(IntegerVector doc, IntegerVector type, IntegerVector z, int K, int D, int V, int iter, double beta, double alpha) {

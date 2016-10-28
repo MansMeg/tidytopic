@@ -7,10 +7,10 @@
 as.sparseMatrix(x)
 }
 \arguments{
-\item{x}{a \code{\link[as.tidy_topic_matrix]{tidy_topic_matrix}}.}
+\item{x}{a \code{\link[=as.tidy_topic_matrix]{tidy_topic_matrix}}.}
 }
 \description{
-Converts a \code{\link[as.tidy_topic_matrix]{tidy_topic_matrix}} to 
+Converts a \code{\link[=as.tidy_topic_matrix]{tidy_topic_matrix}} to 
 a sparse matrix format of \code{\link[Matrix]{sparseMatrix}} in the 
 \code{Matrix} package.
 }

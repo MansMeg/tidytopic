@@ -7,7 +7,23 @@
 sample_vanilla_lda(doc, type, z, K, D, V, iter, beta, alpha)
 }
 \arguments{
-\item{p}{a vector of (pssoble unnormalized) probabilities.}
+\item{doc}{TODO}
+
+\item{type}{TODO}
+
+\item{z}{TODO}
+
+\item{K}{TODO}
+
+\item{D}{TODO}
+
+\item{V}{TODO}
+
+\item{iter}{TODO}
+
+\item{beta}{TODO}
+
+\item{alpha}{TODO}
 }
 \description{
 Sample a couple of iterations using simple LDA

@@ -15,7 +15,8 @@ Suggests:
   testthat,
   knitr,
   readr,
-  Matrix
+  Matrix,
+  stringr
 LinkingTo:
     Rcpp,
     testthat

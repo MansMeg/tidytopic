@@ -105,16 +105,16 @@ term_weight.term_score <- function(x, beta, ...){
 #' @keywords internal
 term_weight.relevance <- function(x, beta, ...){
   param <- list(...)
-  if(is.null(param$lamda)) {
+  if(is.null(param$lambda)) {
     message("lambda is set to 0.6")
-    param$lamda <- 1
+    param$lambda <- 0.6
   }
-  lambda <- param$lamda 
-  checkmate::assert_number(lamda, lower = 0, upper = 1)
+  lambda <- param$lambda 
+  checkmate::assert_number(lambda, lower = 0, upper = 1)
 
   phi <- p_w_given_k(x, beta)
   pw <- p_w(x, beta)
-  pw <- dplyr::mutate(pw, lpwl = log(p) * (1-param$lamda), p = NULL)
+  pw <- dplyr::mutate(pw, lpwl = log(p) * (1-param$lambda), p = NULL)
   phi <- dplyr::left_join(phi, pw, by = "type")
   phi <- dplyr::mutate(phi, p = log(p) - lpwl)
   phi
@@ -194,7 +194,7 @@ p_k <- function(x, beta){
   V <- length(levels(x$type))
   K <- length(unique(x$topic))
   
-  total_mass <- dplyr::summarise(x, weight = n()) 
+  total_mass <- dplyr::summarise(x, weight = sum(n)) 
   total_mass <- dplyr::mutate(total_mass, weight = weight + beta * K * V)
   
   x <- dplyr::summarise(dplyr::group_by(x, topic), n = sum(n))

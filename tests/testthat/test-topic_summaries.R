@@ -9,50 +9,55 @@ test_that(desc="base functions are correct",{
   N_k <- dplyr::summarise(dplyr::group_by(sotu50, topic), n = n())
   N_w <- dplyr::summarise(dplyr::group_by(sotu50, type), n = n())
   beta <- 0.1
+  ttm <- type_topic_matrix(sotu50)
 
-  expect_equal(sum(p_wk(sotu50, beta = 0)$p), 1)
-  expect_silent(ps <- p_wk(sotu50, beta))
+  expect_equal(sum(p_wk(x, beta = 0)$p), 1)
+  expect_silent(ps <- p_wk(x, beta))
   mass <- (N + V * K * beta)
   expect_equal(sum(ps$p) + ((V * K - nrow(ps)) * beta) / mass, 1)
 
-  expect_equal(sum(p_w_given_k(sotu50, beta = 0)$p), K)
-  expect_silent(ps <- p_w_given_k(sotu50, beta))
+  expect_equal(sum(p_w_given_k(x, beta = 0)$p), K)
+  expect_silent(ps <- p_w_given_k(x, beta))
   p_k <- dplyr::left_join(dplyr::summarise(dplyr::group_by(ps, topic), p = sum(p), non_zero = n()), N_k, by = "topic")
   p_k <- dplyr::mutate(p_k, p_zero = (V - non_zero) * beta / (n + V * beta), mass = NULL, n = NULL, non_zero = NULL)
   expect_equal(p_k$p + p_k$p_zero, rep(1, K))
 
-  expect_equal(sum(p_k_given_w(sotu50, beta = 0)$p), length(levels(sotu50$type)))
-  ps <- p_k_given_w(sotu50, beta)
+  expect_equal(sum(p_k_given_w(x, beta = 0)$p), length(levels(sotu50$type)))
+  ps <- p_k_given_w(x, beta)
   p_w_test <- dplyr::left_join(dplyr::summarise(dplyr::group_by(ps, type), p = sum(p), non_zero = n()), N_w, by = "type")
   p_w_test <- dplyr::mutate(p_w_test,  p_zero = (K - non_zero) * beta / (n + K * beta), n = NULL, non_zero = NULL)
   expect_equal(p_w_test$p + p_w_test$p_zero, rep(1, V))
 
-  expect_equal(sum(p_w(sotu50, beta = 0)$p), 1)
-  expect_equal(sum(p_w(sotu50, beta)$p), 1)
+  expect_equal(sum(p_w(x, beta = 0)$p), 1)
+  expect_equal(sum(p_w(x, beta)$p), 1)
 
-  expect_equal(sum(p_k(sotu50, beta = 0)$p), 1)
-  expect_equal(sum(p_k(sotu50, beta)$p), 1)
+  expect_equal(sum(p_k(x, beta = 0)$p), 1)
+  expect_equal(sum(p_k(x, beta)$p), 1)
 
 })
 
 test_that(desc="reweighting methods",{
   skip_on_travis()
   
-  j <- 10
+  j <- 5
   K <- length(unique(sotu50$topic))
-  expect_silent(tp <- type_probability(sotu50, j))
+  expect_silent(tp1 <- top_terms(x, "type_probability", j))
+  expect_silent(tp2 <- top_terms(sotu50, "type_probability", j))
+  expect_identical(tp1, tp2)
+  expect_equal(nrow(tp1), j * K)
+
+  expect_silent(tp <- top_terms(x, "topic_probability", j))
   expect_equal(nrow(tp), j * K)
 
-  expect_silent(tp <- topic_probability(sotu50, j))
+  expect_silent(tp <- top_terms(x, "n_wk", j))
   expect_equal(nrow(tp), j * K)
 
-  expect_silent(tp <- KR1(sotu50, j))
+  expect_silent(tp <- top_terms(x, "relevance", j, lambda = 0.5))
+  expect_message(tp <- top_terms(x, "relevance", j), regexp = "0\\.6")
   expect_equal(nrow(tp), j * K)
 
-  expect_silent(tp <- KR2(sotu50, j))
-  expect_equal(nrow(tp), j * K)
-
-  expect_silent(tp <- relevance(sotu50, j))
+  expect_error(tp <- top_terms(x, "term_score", j))
+  expect_silent(tp <- top_terms(x, "term_score", j, beta))
   expect_equal(nrow(tp), j * K)
 
 })

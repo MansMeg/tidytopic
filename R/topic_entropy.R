@@ -19,7 +19,7 @@ topic_entropy <- function(x, prior = 0){
   checkmate::assert(is.tidy_topic_array(x))
   stopifnot(prior == 0)
 
-  se_groups <- as.character(groups(x))
+  se_groups <- as.character(dplyr::groups(x))
   se_topic_groups <- c(se_groups, "topic")
   K <- length(unique(x$topic))
   

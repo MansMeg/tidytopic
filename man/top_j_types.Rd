@@ -11,5 +11,8 @@ top_j_types(x, j)
 
 \item{j}{top j types to return (min 1 type)}
 }
+\description{
+Return top j terms by weight
+}
 \keyword{internal}
 

@@ -124,7 +124,7 @@ term_weight.relevance <- function(x, beta, ...){
 
 # Below are helper functions used in multiple reweighting methods
 
-#' @title Return top j terms by weight
+#' Return top j terms by weight
 #' 
 #' @param x a weighted tidy type topic matrix
 #' @param j top j types to return (min 1 type)

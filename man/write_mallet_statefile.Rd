@@ -7,11 +7,13 @@
 write_mallet_statefile(state, alpha, beta, state_file)
 }
 \arguments{
+\item{state}{a \code{tidy_topic_state} object in a one-token-per-row format (see \code{tidytext}).}
+
 \item{alpha}{a numeric vector of length equal one (uniform prior) or to the number of topics. This is the alpha prior for each topic.}
 
 \item{beta}{A numeric element with the beta prior (single value).}
 
-\item{state_file}{a \code{tidy_topic_state} object in a one-token-per-row format (see \code{tidytext}).}
+\item{state_file}{a character string naming a file.}
 }
 \value{
 \code{NULL} if file was written successfully.

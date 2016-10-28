@@ -15,6 +15,7 @@
 #' @export
 imi <- function(state, w=NULL){
   requireNamespace("dplyr")
+  requireNamespace("magrittr")
   checkmate::assert(is.tidy_topic_state(state))
   checkmate::assert(checkmate::check_class(w, "tbl_df"),
                     checkmate::check_character(w, null.ok = TRUE))
@@ -76,6 +77,7 @@ imi_group <- function(state, g, w = NULL){
 #' @export
 mi <- function(state){
   requireNamespace("dplyr")
+  requireNamespace("magrittr")
   checkmate::assert(is.tidy_topic_state(state))
 
   st <-
@@ -139,6 +141,7 @@ mi_deviance <- function(true, rep){
   checkmate::assert_subset(names(rep), c("topic","mi"))
   checkmate::assert_set_equal(unique(true$topic), unique(rep$topic))
   checkmate::assert(nrow(true) < nrow(rep))
+  requireNamespace("magrittr")
 
   group_by(rep, topic) %>%
     summarise(mean = mean(mi), sd = stats::sd(mi)) %>%
@@ -205,6 +208,7 @@ plot_imi_type <- function(true, rep, k){
 #' @export
 sample_types_given_topic <- function(state){
   requireNamespace("dplyr")
+  requireNamespace("magrittr")
 
   checkmate::assert(is.tidy_topic_state(state))
 

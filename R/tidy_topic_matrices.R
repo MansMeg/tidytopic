@@ -56,14 +56,14 @@ topic_type_matrix<-function(state){
 
 #' Convert a \code{tidy_topic_matrix} to a sparse matrix
 #' 
-#' @param x a \code{\link[=as.tidy_topic_matrix]{tidy_topic_matrix}}.
+#' @param x a \code{tidy_topic_matrix}.
 #' 
 #' @description 
-#' Converts a \code{\link[=as.tidy_topic_matrix]{tidy_topic_matrix}} to 
+#' Converts a \code{tidy_topic_matrix} to 
 #' a sparse matrix format of \code{\link[Matrix]{sparseMatrix}} in the 
 #' \code{Matrix} package.
 #' 
-#' @seealso \code{\link[Matrix]{sparseMatrix}}
+#' @seealso \code{\link[Matrix]{sparseMatrix}} \code{\link{as.tidy_topic_matrix}}
 #' 
 #' @export
 as.sparseMatrix <- function(x){

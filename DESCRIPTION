@@ -14,7 +14,8 @@ Imports:
 Suggests:
   testthat,
   knitr,
-  readr
+  readr,
+  Matrix
 LinkingTo:
     Rcpp,
     testthat

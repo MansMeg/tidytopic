@@ -9,6 +9,7 @@ test_that(desc="TODO",{
 })
 
 test_that(desc="imi",{
+  skip_on_travis()
   imi_test <- imi(sotu50)
   expect_equal(imi_test$imi[1:2], c(0.2901117, 0.7248372), tolerance = .00001)
 
@@ -36,6 +37,7 @@ test_that(desc="mi",{
 })
 
 test_that(desc="group_mi",{
+  skip_on_travis()
   sotu50$group <- sample(1:4, size = nrow(sotu50), replace = TRUE)
   expect_error(mi_test <- mi_group(sotu50, "group"))
   sotu50$group <- as.factor(sotu50$group)

@@ -63,7 +63,7 @@ topic_type_matrix<-function(state){
 #' a sparse matrix format of \code{\link[Matrix]{sparseMatrix}} in the 
 #' \code{Matrix} package.
 #' 
-#' @seealso \code{\link[Matrix]{sparseMatrix}} \code{\link{as.tidy_topic_matrix}}
+#' @seealso \code{\link[Matrix]{sparseMatrix}} \code{\link{is.tidy_topic_matrix}}
 #' 
 #' @export
 as.sparseMatrix <- function(x){

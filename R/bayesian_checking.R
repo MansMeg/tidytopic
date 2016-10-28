@@ -202,8 +202,8 @@ plot_imi_type <- function(true, rep, k){
 #'
 #' @examples
 #' # Load the state of the union topic model
-#' load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
-#' w <- sample_types_given_topic(state = sotu50)
+#' # load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+#' # w <- sample_types_given_topic(state = sotu50)
 #'
 #' @export
 sample_types_given_topic <- function(state){

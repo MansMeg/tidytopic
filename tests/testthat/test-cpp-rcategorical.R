@@ -16,7 +16,7 @@ test_that(desc="Probabilistic test",{
   set.seed(4711)
   count2 <- integer(3)
   for(i in 1:10000){
-    x <- topicmodelsamplers:::rcategorical(unnormalized_prob) + 1
+    x <- tidytopics:::rcategorical(unnormalized_prob) + 1
     count2[x] <- count2[x] + 1
   }
   expect_equal(count2, count)

@@ -7,9 +7,9 @@
 topic_entropy(x, prior = 0)
 }
 \arguments{
-\item{prior}{a smoothing constant to use (often alpha). Not currently implemented.}
+\item{x}{a \code{tidy_topic_array}.}
 
-\item{tidy_topic_matrix}{a \code{tidy_topic_array}.}
+\item{prior}{a smoothing constant to use (often alpha). Not currently implemented.}
 }
 \description{
 Calculate the topic entropy

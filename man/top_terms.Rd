@@ -7,7 +7,7 @@
 top_terms(x, scheme = "type_probability", j = 10, beta = 0, ...)
 }
 \arguments{
-\item{x}{A \code{\link[as.tidy_topic_state]{tidy_topic_state}}}
+\item{x}{A \code{tidy_topic_state}}
 
 \item{scheme}{The weight scheme to use. Default is \code{type_probability}.}
 

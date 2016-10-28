@@ -32,6 +32,7 @@ test_that(desc="group_imi",{
 })
 
 test_that(desc="mi",{
+  skip_on_travis()
   mi_test <- mi(state = sotu50)
   expect_equal(mi_test$mi[1:2], c(3.737234, 4.032572), tolerance = .00001)
 })

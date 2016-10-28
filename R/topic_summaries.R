@@ -25,7 +25,7 @@
 #' 
 #' Sievert, C., & Shirley, K. E. (2014). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).
 #'
-#' @param x A \code{\link[as.tidy_topic_state]{tidy_topic_state}}
+#' @param x A \code{tidy_topic_state}
 #' @param j The number of types to return. Default is 10.
 #' @param scheme The weight scheme to use. Default is \code{type_probability}.
 #' @param beta Beta hyper parameter. Default is 0 (no prior smoothing).
@@ -161,7 +161,7 @@ p_k_given_w <- function(x, beta){
 
   x <- dplyr::left_join(x, type_mass, by = "type")
   x <- dplyr::mutate(x, p = (n + beta) / weight, weight = NULL, n = NULL)
-  x <- ungroup(x)
+  x <- dplyr::ungroup(x)
   x
 }
 

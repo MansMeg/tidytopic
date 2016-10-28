@@ -10,7 +10,8 @@ LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.7),
     dplyr (>= 0.5),
-    checkmate
+    checkmate,
+    magrittr
 Suggests:
   testthat,
   knitr,

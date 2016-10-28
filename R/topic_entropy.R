@@ -5,7 +5,7 @@
 #' 
 #' Assumes that of beta is set to 0 the probability 0 is the limit when p -> 0+ i.e 0.
 #' 
-#' @param tidy_topic_matrix a \code{tidy_topic_array}.
+#' @param x a \code{tidy_topic_array}.
 #' @param prior a smoothing constant to use (often alpha). Not currently implemented.
 #'
 #' @examples 

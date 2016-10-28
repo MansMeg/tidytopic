@@ -1,6 +1,9 @@
 context("type_topic_reweighting")
 
 load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+beta <- 0.1
+ttm <- type_topic_matrix(sotu50)
+
 
 test_that(desc="base functions are correct",{
   K <- length(unique(sotu50$topic))
@@ -8,8 +11,6 @@ test_that(desc="base functions are correct",{
   N <- nrow(sotu50)
   N_k <- dplyr::summarise(dplyr::group_by(sotu50, topic), n = n())
   N_w <- dplyr::summarise(dplyr::group_by(sotu50, type), n = n())
-  beta <- 0.1
-  ttm <- type_topic_matrix(sotu50)
 
   expect_equal(sum(p_wk(ttm, beta = 0)$p), 1)
   expect_silent(ps <- p_wk(ttm, beta))
@@ -38,11 +39,8 @@ test_that(desc="base functions are correct",{
 
 test_that(desc="reweighting methods",{
 
-
-  
   j <- 5
   K <- length(unique(sotu50$topic))
-  ttm <- type_topic_matrix(sotu50)
   
   expect_silent(tp1 <- top_terms(ttm, "type_probability", j))
   expect_silent(tp2 <- top_terms(sotu50, "type_probability", j))

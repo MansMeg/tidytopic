@@ -173,7 +173,7 @@ p_wk <- function(x, beta){
   total_mass <- dplyr::mutate(total_mass, weight = weight + beta * K * V)
 
   x <- dplyr::mutate(x, p = (n + beta) / total_mass$weight, n = NULL)
-  x <- ungroup(x)
+  x <- dplyr::ungroup(x)
   x
 }
 

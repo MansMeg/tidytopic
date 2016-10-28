@@ -34,7 +34,7 @@ topic_entropy <- function(x, prior = 0){
   }
   entr <- dplyr::mutate(entr, p = n / n_sum , hd = p * log(p), p = NULL, n_sum = NULL)
 
-  if(length(se_groups) > 0) entr <- dplyr::group_by_(entr, se_groups)
+  if(length(se_groups) > 0) entr <- dplyr::group_by_(entr, .dots = se_groups)
   entr <- dplyr::summarise(entr, H = - sum(hd))
   entr
 }

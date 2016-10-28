@@ -8,20 +8,21 @@
 #'
 #' @export
 is.tidy_topic_state <- function(x){
-  checkmate::assert_class(x, "tbl_df")
-  checkmate::assert_subset(c("doc", "type", "topic"), names(x))
-  checkmate::assert(checkmate::check_class(x$doc, "integer"),
-                    checkmate::check_class(x$doc, "factor"))
-  checkmate::assert_class(x$type, "factor")
-  checkmate::assert(checkmate::check_class(x$doc, "integer"),
-                    checkmate::check_class(x$doc, "factor"))
+  if(!checkmate::test_class(x, "tbl_df")) return(FALSE)
+  if(!checkmate::test_subset(c("doc", "type", "topic"), names(x))) return(FALSE)
+  if(!checkmate::assert(checkmate::test_class(x$doc, "integer"),
+                        checkmate::test_class(x$doc, "factor"))) return(FALSE)
+  if(!checkmate::test_class(x$type, "factor")) return(FALSE)
+  if(!checkmate::assert(checkmate::test_class(x$doc, "integer"),
+                        checkmate::test_class(x$doc, "factor"))) return(FALSE)
+  TRUE
 }
 
 #' @rdname is.tidy_topic_state
 #' @keywords internal
 assert_state <- function(x){
   .Deprecated("is.tidy_topic_state")
-  is.tidy_topic_state(x)
+  checkmate::assert(is.tidy_topic_state(x))
 }
 
 
@@ -41,17 +42,17 @@ assert_state <- function(x){
 #'
 #' @export
 is.tidy_topic_array <- function(x){
-  checkmate::assert_class(x, "tbl_df")
-  checkmate::assert_subset(c("n", "topic"), names(x))
-  checkmate::assert_integer(x$n, lower = 1L)
+  if(!checkmate::test_class(x, "tbl_df")) return(FALSE)
+  if(!checkmate::test_subset(c("n", "topic"), names(x))) return(FALSE)
+  if(!checkmate::test_integer(x$n, lower = 1L)) return(FALSE)
   TRUE
 }
 
 #' @rdname is.tidy_topic_array
 #' @export
 is.tidy_topic_matrix <- function(x){
-  is.tidy_topic_array(x)
-  checkmate::assert(ncol(x) == 3)
+  if(!is.tidy_topic_array(x)) return(FALSE)
+  if(ncol(x) != 3) return(FALSE)
   TRUE
 }
 
@@ -59,5 +60,5 @@ is.tidy_topic_matrix <- function(x){
 #' @keywords internal
 assert_state_object <- function(x){
   .Deprecated("is.tidy_topic_state")
-  is.tidy_topic_state(x)
+  checkmate::assert(is.tidy_topic_state(x))
 }

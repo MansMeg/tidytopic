@@ -12,7 +12,7 @@ test_that(desc="imi",{
   imi_test <- imi(sotu50)
   expect_equal(imi_test$imi[1:2], c(0.2901117, 0.7248372), tolerance = .00001)
 
-  w <- type_probability(sotu50, 3)
+  w <- top_terms(sotu50, scheme = "type_probability", 3)
   w <- dplyr::group_by(w, type)
   expect_error(imi_test <- imi(sotu50, w))
 

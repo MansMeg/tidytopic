@@ -15,10 +15,10 @@ Imports:
 Suggests:
   testthat,
   knitr,
+  tidytext,
   rmarkdown,
   readr,
   Matrix,
-  tidytext,
   janeaustenr,
   stringr
 LinkingTo:

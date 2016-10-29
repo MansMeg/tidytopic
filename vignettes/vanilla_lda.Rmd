@@ -42,7 +42,7 @@ tidy_books$word <- as.factor(tidy_books$word)
 
 Now let us sample one iteration with a gibbs sampler
 
-```{r}
+```{r, eval=FALSE}
 doc <- as.integer(tidy_books$chapter)
 D <- length(unique(doc))
 checkmate::assert_integer(doc, 0, D)
@@ -85,7 +85,7 @@ stat_txt$doc <- as.integer(as.factor(stat_txt$doc))
 
 
 
-```{r}
+```{r, eval=FALSE}
 doc <- as.integer(stat_txt$doc)
 D <- length(unique(doc))
 checkmate::assert_integer(doc, 0, D)
@@ -99,8 +99,7 @@ K <- length(unique(z))
 checkmate::assert_integer(z, 0, K)
 
 system.time(
-z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = D, V = V,
-                   iter = 100,
+z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = D, V = V, iter = 100,
                    beta = 0.1, alpha = 0.1)
 )
 stat_txt$topic <- z2 + 1L

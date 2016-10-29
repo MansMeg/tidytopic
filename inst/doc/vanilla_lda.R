@@ -20,31 +20,31 @@ tidy_books <- filter(tidy_books, book == "Pride & Prejudice")
 tidy_books$topic <- sample(x = 1:20, replace = TRUE, size = nrow(tidy_books))
 tidy_books$word <- as.factor(tidy_books$word)
 
-## ------------------------------------------------------------------------
-doc <- as.integer(tidy_books$chapter)
-D <- length(unique(doc))
-checkmate::assert_integer(doc, 0, D)
-
-type <- as.integer(tidy_books$word) - 1L
-V <- length(unique(type))
-checkmate::assert_integer(type, 0, V)
-
-z <- tidy_books$topic - 1L
-K <- length(unique(z))
-checkmate::assert_integer(z, 0, K)
-system.time(
-z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = D, V = V,
-                   iter = 100,
-                   beta = 0.1, alpha = 0.1)
-)
-tidy_books$topic <- z2 + 1L
-
-
-# Test
-X <- t(table(tidy_books$topic, tidy_books$word))
-i <- 5
-X[,i][order(X[,i], decreasing = TRUE)][1:30]
-
+## ---- eval=FALSE---------------------------------------------------------
+#  doc <- as.integer(tidy_books$chapter)
+#  D <- length(unique(doc))
+#  checkmate::assert_integer(doc, 0, D)
+#  
+#  type <- as.integer(tidy_books$word) - 1L
+#  V <- length(unique(type))
+#  checkmate::assert_integer(type, 0, V)
+#  
+#  z <- tidy_books$topic - 1L
+#  K <- length(unique(z))
+#  checkmate::assert_integer(z, 0, K)
+#  system.time(
+#  z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = D, V = V,
+#                     iter = 100,
+#                     beta = 0.1, alpha = 0.1)
+#  )
+#  tidy_books$topic <- z2 + 1L
+#  
+#  
+#  # Test
+#  X <- t(table(tidy_books$topic, tidy_books$word))
+#  i <- 5
+#  X[,i][order(X[,i], decreasing = TRUE)][1:30]
+#  
 
 ## ------------------------------------------------------------------------
 
@@ -58,25 +58,24 @@ stat_txt$word <- as.factor(stat_txt$word)
 stat_txt$doc <- as.integer(as.factor(stat_txt$doc))
 
 
-## ------------------------------------------------------------------------
-doc <- as.integer(stat_txt$doc)
-D <- length(unique(doc))
-checkmate::assert_integer(doc, 0, D)
-
-type <- as.integer(stat_txt$word) - 1L
-V <- length(unique(type))
-checkmate::assert_integer(type, 0, V)
-
-z <- stat_txt$topic - 1L
-K <- length(unique(z))
-checkmate::assert_integer(z, 0, K)
-
-system.time(
-z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = D, V = V,
-                   iter = 100,
-                   beta = 0.1, alpha = 0.1)
-)
-stat_txt$topic <- z2 + 1L
+## ---- eval=FALSE---------------------------------------------------------
+#  doc <- as.integer(stat_txt$doc)
+#  D <- length(unique(doc))
+#  checkmate::assert_integer(doc, 0, D)
+#  
+#  type <- as.integer(stat_txt$word) - 1L
+#  V <- length(unique(type))
+#  checkmate::assert_integer(type, 0, V)
+#  
+#  z <- stat_txt$topic - 1L
+#  K <- length(unique(z))
+#  checkmate::assert_integer(z, 0, K)
+#  
+#  system.time(
+#  z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = D, V = V, iter = 100,
+#                     beta = 0.1, alpha = 0.1)
+#  )
+#  stat_txt$topic <- z2 + 1L
 
 ## ----sessioninfo, message=FALSE, warning=FALSE---------------------------
 sessionInfo()

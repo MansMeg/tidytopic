@@ -15,6 +15,7 @@ Imports:
 Suggests:
   testthat,
   knitr,
+  rmarkdown,
   readr,
   Matrix,
   stringr

@@ -1,0 +1,55 @@
+---
+title: "Introduction to the tidytopic package"
+author: "Mans Magnusson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tidytopics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The tidytopics package is a toolkit for topic modeling and analysis in R. This is a short introduction to the package, the data structures and some basic functionalities. See 
+
+## Basic data structure
+
+The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are two main data structures in tidytopics: `tidy_topic_state` and `tidy_topic_matrix`/`tidy_topic_array`. This is a way of handling the often very large corpuses in a simple and effective way for post processing and analysis using the \code{tidytext} and \code{dplyr}.
+
+EXAMPLES HERE sparse matrix 
+
+
+### Example: A tidy type probability matrix
+
+Examples of type_probabilities
+
+Examples of topic_probabilities
+
+
+## Import and export mallet state files
+
+```{r}
+library(tidytext)
+library(janeaustenr)
+library(dplyr)
+library(stringr)
+
+original_books <- austen_books() %>%
+  group_by(book) %>%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, regex("^chapter [\\divxlc]",
+                                                 ignore_case = TRUE)))) %>%
+  ungroup()
+
+tidy_books <- original_books %>%
+  unnest_tokens(word, text)
+
+```
+
+
+## Session info
+
+This vignette was created with
+
+```{r sessioninfo, message=FALSE, warning=FALSE}
+sessionInfo()
+```

@@ -1,19 +1,4 @@
----
-title: "Vanilla LDA"
-author: "Mans Magnusson"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{topicmodelsamplers}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-This is a short introduction how to play with topic models using the topicmodelsamplers R package. The purpose of this packag is that is much more nitty-gritty than more stand alone topicmodel packages such as the LDA package and the.
-
-It is also a testbed where one can start out your own topic model sampler in a similar fashion to that of mallet. It is also possible to transfer the topic state to and from mallet.
-
-```{r}
+## ------------------------------------------------------------------------
 library(tidytext)
 library(janeaustenr)
 library(dplyr)
@@ -29,20 +14,13 @@ original_books <- austen_books() %>%
 tidy_books <- original_books %>%
   unnest_tokens(word, text)
 
-```
 
-As a first step we need to initialize the number of topic randomly. This is alos one way to initialize the number of topics.
-
-```{r}
+## ------------------------------------------------------------------------
 tidy_books <- filter(tidy_books, book == "Pride & Prejudice")
 tidy_books$topic <- sample(x = 1:20, replace = TRUE, size = nrow(tidy_books))
 tidy_books$word <- as.factor(tidy_books$word)
-```
 
-
-Now let us sample one iteration with a gibbs sampler
-
-```{r}
+## ------------------------------------------------------------------------
 doc <- as.integer(tidy_books$chapter)
 D <- length(unique(doc))
 checkmate::assert_integer(doc, 0, D)
@@ -67,10 +45,8 @@ X <- t(table(tidy_books$topic, tidy_books$word))
 i <- 5
 X[,i][order(X[,i], decreasing = TRUE)][1:30]
 
-```
 
-
-```{r}
+## ------------------------------------------------------------------------
 
 stat_txt_path <- system.file("extdata", "stats.txt", package="tidytopics")
 stat_txt <- 
@@ -81,11 +57,8 @@ stat_txt$topic <- sample(x = 1:10, replace = TRUE, size = nrow(stat_txt))
 stat_txt$word <- as.factor(stat_txt$word)
 stat_txt$doc <- as.integer(as.factor(stat_txt$doc))
 
-```
 
-
-
-```{r}
+## ------------------------------------------------------------------------
 doc <- as.integer(stat_txt$doc)
 D <- length(unique(doc))
 checkmate::assert_integer(doc, 0, D)
@@ -104,12 +77,7 @@ z2 <- tidytopics:::sample_vanilla_lda(doc = doc, type = type, z = z, K = K, D = 
                    beta = 0.1, alpha = 0.1)
 )
 stat_txt$topic <- z2 + 1L
-```
 
-## Session info
-
-This vignette was created with
-
-```{r sessioninfo, message=FALSE, warning=FALSE}
+## ----sessioninfo, message=FALSE, warning=FALSE---------------------------
 sessionInfo()
-```
+

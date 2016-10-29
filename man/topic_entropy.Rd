@@ -23,7 +23,7 @@ Assumes that of beta is set to 0 the probability 0 is the limit when p -> 0+ i.e
 load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
 dtm <- doc_topic_matrix(sotu50)
 H_0 <- topic_entropy(x = dtm)
-H_doc <- topic_entropy(x = group_by(dtm, doc))
+H_doc <- topic_entropy(x = dplyr::group_by(dtm, doc))
 
 }
 

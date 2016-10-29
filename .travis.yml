@@ -10,8 +10,8 @@ sudo: required
 # Be strict when checking our package
 warnings_are_errors: true
 
-r_packages:
-  -  tidytext
+#r_packages:
+#  -  tidytext
 
 r_github_packages:
   -  jimhester/covr

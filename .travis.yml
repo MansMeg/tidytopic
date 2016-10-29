@@ -11,7 +11,7 @@ sudo: required
 warnings_are_errors: true
 
 r_packages:
-  -  tidytopics
+  -  tidytext
 
 r_github_packages:
   -  jimhester/covr

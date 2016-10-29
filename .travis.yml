@@ -3,15 +3,12 @@
 language: r
 r:
   - release
-  - devel
+#  - devel
 sudo: required
 # cache: packages
 
 # Be strict when checking our package
 warnings_are_errors: true
-
-#r_packages:
-#  -  tidytext
 
 r_github_packages:
   -  jimhester/covr

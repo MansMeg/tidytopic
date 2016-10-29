@@ -76,7 +76,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <p>This is a short introduction how to play with topic models using the topicmodelsamplers R package. The purpose of this packag is that is much more nitty-gritty than more stand alone topicmodel packages such as the LDA package and the.</p>
 <p>It is also a testbed where one can start out your own topic model sampler in a similar fashion to that of mallet. It is also possible to transfer the topic state to and from mallet.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidytext)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidytopics)
+<span class="kw">library</span>(tidytext)
 <span class="kw">library</span>(janeaustenr)
 <span class="kw">library</span>(dplyr)
 <span class="kw">library</span>(stringr)
@@ -167,9 +168,9 @@ stat_txt$topic &lt;-<span class="st"> </span>z2 +<span class="st"> </span>1L</co
 ##  [9] tools_3.3.0      parallel_3.3.0   grid_3.3.0       broom_0.4.1     
 ## [13] nlme_3.1-127     psych_1.6.6      DBI_0.4-1        withr_1.0.1     
 ## [17] htmltools_0.3.5  lazyeval_0.2.0   yaml_2.1.13      assertthat_0.1  
-## [21] digest_0.6.10    tibble_1.2       Matrix_1.2-6     formatR_1.4     
-## [25] reshape2_1.4.1   tidyr_0.5.1      tokenizers_0.1.4 SnowballC_0.5.1 
-## [29] evaluate_0.10    memoise_1.0.0    rmarkdown_1.1    stringi_1.1.2</code></pre>
+## [21] digest_0.6.10    tibble_1.2       Matrix_1.2-6     tidyr_0.5.1     
+## [25] reshape2_1.4.1   formatR_1.4      tokenizers_0.1.4 SnowballC_0.5.1 
+## [29] memoise_1.0.0    evaluate_0.10    rmarkdown_1.1    stringi_1.1.2</code></pre>
 </div>
 
 

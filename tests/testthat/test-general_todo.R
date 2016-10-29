@@ -2,6 +2,7 @@ context("General TODO of the package")
 
 test_that(desc="TODO",{
   skip_on_travis()
+  expect_true(FALSE, info = "fix example data to use. Copy sotu from mallet")
   expect_true(FALSE, info = "fix sample_types_given_topic example")
   expect_true(FALSE, info = "fix examples everywhere")
   expect_true(FALSE, info = "remove magrittr dependency")

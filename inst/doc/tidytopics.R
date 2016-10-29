@@ -1,4 +1,5 @@
 ## ------------------------------------------------------------------------
+library(tidytopics)
 library(tidytext)
 library(janeaustenr)
 library(dplyr)

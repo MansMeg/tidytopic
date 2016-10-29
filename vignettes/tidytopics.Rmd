@@ -28,6 +28,7 @@ Examples of topic_probabilities
 ## Import and export mallet state files
 
 ```{r}
+library(tidytopics)
 library(tidytext)
 library(janeaustenr)
 library(dplyr)

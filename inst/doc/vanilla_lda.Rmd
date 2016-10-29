@@ -14,6 +14,7 @@ This is a short introduction how to play with topic models using the topicmodels
 It is also a testbed where one can start out your own topic model sampler in a similar fashion to that of mallet. It is also possible to transfer the topic state to and from mallet.
 
 ```{r}
+library(tidytopics)
 library(tidytext)
 library(janeaustenr)
 library(dplyr)

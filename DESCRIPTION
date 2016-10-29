@@ -18,6 +18,8 @@ Suggests:
   rmarkdown,
   readr,
   Matrix,
+  tidytext,
+  janeaustenr,
   stringr
 LinkingTo:
     Rcpp,

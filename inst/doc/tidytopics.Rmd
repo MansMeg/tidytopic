@@ -13,7 +13,7 @@ The tidytopics package is a toolkit for topic modeling and analysis in R. This i
 
 ## Basic data structure
 
-The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are two main data structures in tidytopics: `tidy_topic_state` and `tidy_topic_matrix`/`tidy_topic_array`. This is a way of handling the often very large corpuses in a simple and effective way for post processing and analysis using the \code{tidytext} and \code{dplyr}.
+The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are two main data structures in tidytopics: `tidy_topic_state` and `tidy_topic_matrix`/`tidy_topic_array`. This is a way of handling the often very large corpuses in a simple and effective way for post processing and analysis using the `tidytext` and `dplyr` R packages.
 
 EXAMPLES HERE sparse matrix 
 

@@ -20,7 +20,7 @@ See reference for details.
 }
 \examples{
 # Load the state of the union topic model
-# load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+# data("sotu50")
 # w <- sample_types_given_topic(state = sotu50)
 
 }

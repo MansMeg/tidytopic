@@ -20,7 +20,7 @@ Calculates the entropy over topics.
 Assumes that of beta is set to 0 the probability 0 is the limit when p -> 0+ i.e 0.
 }
 \examples{
-load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+data("sotu50")
 dtm <- doc_topic_matrix(sotu50)
 H_0 <- topic_entropy(x = dtm)
 H_doc <- topic_entropy(x = dplyr::group_by(dtm, doc))

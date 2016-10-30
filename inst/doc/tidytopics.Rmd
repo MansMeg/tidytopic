@@ -29,8 +29,8 @@ Examples of topic_probabilities
 
 ```{r}
 library(tidytopics)
-library(tidytext)
 library(janeaustenr)
+library(tidytext)
 library(dplyr)
 library(stringr)
 

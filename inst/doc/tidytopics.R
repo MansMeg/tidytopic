@@ -1,7 +1,7 @@
 ## ------------------------------------------------------------------------
 library(tidytopics)
-library(tidytext)
 library(janeaustenr)
+library(tidytext)
 library(dplyr)
 library(stringr)
 

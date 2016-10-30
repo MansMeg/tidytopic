@@ -47,17 +47,17 @@ tidy_books$word <- as.factor(tidy_books$word)
 #  X[,i][order(X[,i], decreasing = TRUE)][1:30]
 #  
 
-## ------------------------------------------------------------------------
-
-stat_txt_path <- system.file("extdata", "stats.txt", package="tidytopics")
-stat_txt <- 
-  data_frame(text = readLines(stat_txt_path)) %>% 
-  mutate(doc = row_number()) %>% 
-  unnest_tokens(word, text)
-stat_txt$topic <- sample(x = 1:10, replace = TRUE, size = nrow(stat_txt))
-stat_txt$word <- as.factor(stat_txt$word)
-stat_txt$doc <- as.integer(as.factor(stat_txt$doc))
-
+## ---- eval=FALSE---------------------------------------------------------
+#  
+#  stat_txt_path <- system.file("extdata", "stats.txt", package="tidytopics")
+#  stat_txt <-
+#    data_frame(text = readLines(stat_txt_path)) %>%
+#    mutate(doc = row_number()) %>%
+#    unnest_tokens(word, text)
+#  stat_txt$topic <- sample(x = 1:10, replace = TRUE, size = nrow(stat_txt))
+#  stat_txt$word <- as.factor(stat_txt$word)
+#  stat_txt$doc <- as.integer(as.factor(stat_txt$doc))
+#  
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  doc <- as.integer(stat_txt$doc)

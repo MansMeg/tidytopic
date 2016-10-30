@@ -71,7 +71,7 @@ X[,i][order(X[,i], decreasing = TRUE)][1:30]
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 
 stat_txt_path <- system.file("extdata", "stats.txt", package="tidytopics")
 stat_txt <- 

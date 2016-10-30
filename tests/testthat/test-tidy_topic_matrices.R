@@ -1,6 +1,6 @@
 context("tidy_topic_matrices")
 
-load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+data("sotu50")
 
 test_that(desc="TODO",{
   skip_on_travis()

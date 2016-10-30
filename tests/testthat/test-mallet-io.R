@@ -1,6 +1,6 @@
 context("mallet-io")
 
-state_file <- system.file("extdata/sotu_years_50_1.txt.gz", package = "tidytopics")
+state_file <- "data-raw/sotu50.txt.gz"
 tmp_dir <- tempdir()
 dir.create(tmp_dir, showWarnings = FALSE)
 tmp_txt <- file.path(tmp_dir, "sotu_tmp.txt") 

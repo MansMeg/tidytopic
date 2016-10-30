@@ -1,6 +1,6 @@
 context("type_topic_reweighting")
 
-load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+data("sotu50")
 beta <- 0.1
 ttm <- type_topic_matrix(sotu50)
 

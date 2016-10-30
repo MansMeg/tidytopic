@@ -5,7 +5,7 @@ r:
   - release
 #  - devel
 sudo: required
-# cache: packages
+cache: packages
 
 # Be strict when checking our package
 warnings_are_errors: true

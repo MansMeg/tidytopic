@@ -9,7 +9,7 @@
 #' @param prior a smoothing constant to use (often alpha). Not currently implemented.
 #'
 #' @examples 
-#' load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+#' data("sotu50")
 #' dtm <- doc_topic_matrix(sotu50)
 #' H_0 <- topic_entropy(x = dtm)
 #' H_doc <- topic_entropy(x = dplyr::group_by(dtm, doc))

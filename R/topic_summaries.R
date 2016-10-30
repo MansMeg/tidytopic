@@ -35,8 +35,7 @@
 #' Returns a \code{\link[tibble]{tibble}} with topic and top terms and weights
 #'
 #' @examples
-#' # Load the state of "the State of the Union" topic model
-#' load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+#' data("sotu50")
 #' w <- top_terms(x = sotu50, "n_wk")
 #' w <- top_terms(x = sotu50, beta = 0.01)
 #' 

@@ -11,7 +11,7 @@
 #' 
 #' @examples 
 #' # Load the state of the union topic model
-#' load(system.file("extdata/sotu50.Rdata", package = "tidytopics"))
+#' data("sotu50")
 #' dtm <- doc_topic_matrix(sotu50)
 #' tdm <- topic_doc_matrix(sotu50)
 #' ttm <- type_topic_matrix(sotu50)

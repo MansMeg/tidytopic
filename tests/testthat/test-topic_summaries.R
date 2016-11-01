@@ -46,20 +46,26 @@ test_that(desc="reweighting methods",{
   expect_silent(tp2 <- top_terms(sotu50, "type_probability", j))
   expect_identical(tp1, tp2)
   expect_equal(nrow(tp1), j * K)
+  expect_equal(ncol(tp), 3)
 
   expect_silent(tp <- top_terms(ttm, "topic_probability", j))
   expect_equal(nrow(tp), j * K)
+  expect_equal(ncol(tp), 3)
 
   expect_silent(tp <- top_terms(ttm, "n_wk", j))
   expect_equal(nrow(tp), j * K)
+  expect_equal(ncol(tp), 3)
+  
 
   expect_silent(tp <- top_terms(ttm, "relevance", j, lambda = 0.5))
   expect_message(tp <- top_terms(ttm, "relevance", j), regexp = "0\\.6")
   expect_equal(nrow(tp), j * K)
+  expect_equal(ncol(tp), 3)
 
   expect_error(tp <- top_terms(ttm, "term_score", j))
   expect_silent(tp <- top_terms(ttm, "term_score", j, beta))
   expect_equal(nrow(tp), j * K)
+  expect_equal(ncol(tp), 3)
 
 })
 

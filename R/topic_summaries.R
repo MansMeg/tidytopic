@@ -115,7 +115,7 @@ term_weight.relevance <- function(x, beta, ...){
   pw <- p_w(x, beta)
   pw <- dplyr::mutate(pw, lpwl = log(p) * (1-param$lambda), p = NULL)
   phi <- dplyr::left_join(phi, pw, by = "type")
-  phi <- dplyr::mutate(phi, p = log(p) - lpwl)
+  phi <- dplyr::mutate(phi, p = log(p) - lpwl, lpwl = NULL)
   phi
 }
 

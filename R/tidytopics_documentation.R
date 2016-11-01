@@ -34,6 +34,7 @@ NULL
 #' Topic model of State of the Union Adresses.
 #'
 #' A dataset containing a topic model using 50 topics for State of the Union Adresses.
+#' Stop words has been removed using the Mallet english stop word list.
 #'
 #' @format A \code{\link[tibble]{tibble}} \code{data.frame} with 1,263,832 rows and 3 variables:
 #' \describe{

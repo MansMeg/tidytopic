@@ -18,6 +18,7 @@ sotu50
 }
 \description{
 A dataset containing a topic model using 50 topics for State of the Union Adresses.
+Stop words has been removed using the Mallet english stop word list.
 }
 \seealso{
 \code{\link{sotu}}

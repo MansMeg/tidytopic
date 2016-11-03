@@ -90,6 +90,8 @@ test_that(desc="Warn. for duplicates",{
   K <- length(unique(sotu50$topic))
   tp <- top_terms(ttm, "n_wk", 100000)
   tpr <- top_terms(ttm, "type_probability", 100000)
+  topr <- top_terms(ttm, "topic_probability", 100000, beta = 0.01)
+  
 
   extra_row <- ttm2[72,]
   extra_row_plus <- extra_row
@@ -115,5 +117,12 @@ test_that(desc="Warn. for duplicates",{
   tpr1 <- tpr1[tpr1$type %in% c("fellow-citizens", "senate"),]
   expect_identical(tpr[order(tpr$type_probability),c("topic", "type_probability")],tpr1[order(tpr1$type_probability),c("topic", "type_probability")])
   
+  # Factor id should be used, not factor levels for aggregation. 
+  # But also warn when duplicates
+  expect_warning(topr1 <- top_terms(ttm4, "topic_probability", 100000, beta = 0.01))
+  topr <- topr[topr$type %in% c("fellow-citizens", "senate"),]
+  topr1 <- topr1[topr1$type %in% c("fellow-citizens", "senate"),]
+  expect_identical(topr[order(topr$topic_probability),c("topic", "topic_probability")],topr1[order(topr1$topic_probability),c("topic", "topic_probability")])
+
 })
 

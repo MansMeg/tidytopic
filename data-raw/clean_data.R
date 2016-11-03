@@ -1,6 +1,15 @@
 # Create State of the Union
 library(dplyr)
 
+# Presidents
+uspresidents <- read.table("data-raw/presidents.csv", sep = ";", header = TRUE)
+uspresidents$presidency_start <- lubridate::ymd(uspresidents$presidency_start)
+uspresidents$presidency_end <- lubridate::ymd(uspresidents$presidency_end)
+uspresidents$no <- 1:nrow(uspresidents)
+uspresidents <- uspresidents[, c(7,1:6)]
+
+devtools::use_data(uspresidents, overwrite = TRUE)
+
 # State of the Union Adresses
 sotu <- readLines("data-raw/state_of_the_union_1790_2009.txt")
 sotu <- stringr::str_split(sotu, pattern = "\t")
@@ -11,6 +20,12 @@ sotu$V1 <- as.numeric(unlist(lapply(stringr::str_split(sotu$V1, "-"), function(x
 sotu <- sotu[, c(2,1,3)] 
 names(sotu) <- c("year", "paragraph", "text")
 sotu$paragraph <- as.integer(sotu$paragraph)
+
+sotuspeaker <- read.csv("data-raw/sotuspeaker.csv")
+sotuspeaker$year <- as.integer(sotuspeaker$year)
+sotu$year <- as.integer(sotu$year)
+sotu <- left_join(sotu, sotuspeaker, by = "year")
+sotu <- sotu[,c(1,4,2,3)]
 
 devtools::use_data(sotu, overwrite = TRUE)
 

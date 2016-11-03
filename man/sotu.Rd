@@ -7,6 +7,7 @@
 \format{A \code{\link[tibble]{tibble}} \code{data.frame} with 6359 rows and 3 variables:
 \describe{
   \item{year}{Year of the adress.}
+  \item{president}{President that gave the address.}
   \item{paragraph}{The paragraph of the address.}
   \item{text}{The address content.}
 }}

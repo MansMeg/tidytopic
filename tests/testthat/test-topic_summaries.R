@@ -37,7 +37,7 @@ test_that(desc="base functions are correct",{
 
 })
 
-test_that(desc="reweighting methods",{
+test_that(desc="reweighting methods / api",{
 
   j <- 5
   K <- length(unique(sotu50$topic))
@@ -67,5 +67,19 @@ test_that(desc="reweighting methods",{
   expect_equal(nrow(tp), j * K)
   expect_equal(ncol(tp), 3)
 
+})
+
+
+test_that(desc="adding extra variables do not fail / api",{
+  
+  j <- 5
+  K <- length(unique(sotu50$topic))
+  ttm2 <- ttm
+  ttm2$extra_var <- 1
+  
+  expect_silent(tp1 <- top_terms(ttm, "type_probability", j))
+  expect_silent(tp2 <- top_terms(ttm2, "type_probability", j))
+  expect_identical(tp1, tp2)
+  
 })
 

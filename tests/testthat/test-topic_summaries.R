@@ -83,3 +83,21 @@ test_that(desc="adding extra variables do not fail / api",{
   
 })
 
+
+test_that(desc="Warn. for duplicates",{
+  
+  j <- 5
+  K <- length(unique(sotu50$topic))
+  ttm2 <- ttm
+  extra_row <- ttm2[72,]
+  extra_row_plus <- extra_row
+  extra_row_plus$n <- extra_row_plus$n + 3L
+  
+  ttm2 <- dplyr::bind_rows(ttm,extra_row)
+  ttm3 <- dplyr::bind_rows(ttm,extra_row_plus)
+  
+  expect_warning(tp1 <- top_terms(ttm2, "type_probability", j))
+  expect_warning(tp1 <- top_terms(ttm3, "type_probability", j))
+  
+  
+})

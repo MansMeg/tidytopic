@@ -88,7 +88,9 @@ test_that(desc="Warn. for duplicates",{
   
   j <- 5
   K <- length(unique(sotu50$topic))
-  ttm2 <- ttm
+  tp <- top_terms(ttm, "n_wk", 100000)
+  tpr <- top_terms(ttm, "type_probability", 100000)
+
   extra_row <- ttm2[72,]
   extra_row_plus <- extra_row
   extra_row_plus$n <- extra_row_plus$n + 3L
@@ -98,6 +100,20 @@ test_that(desc="Warn. for duplicates",{
   
   expect_warning(tp1 <- top_terms(ttm2, "type_probability", j))
   expect_warning(tp1 <- top_terms(ttm3, "type_probability", j))
+
+  # Check that no aggregation is done  
+  ttm4 <- ttm
+  ttm4$type[ttm4$type == "senate"] <- "fellow-citizens"
   
+  expect_warning(tp1 <- top_terms(ttm4, "n_wk", 100000))
+  tp <- tp[tp$type %in% c("fellow-citizens", "senate"),]
+  tp1 <- tp1[tp1$type %in% c("fellow-citizens", "senate"),]
+  expect_identical(tp[order(tp$n_wk),c("topic", "n_wk")],tp1[order(tp1$n_wk),c("topic", "n_wk")])
+
+  expect_warning(tpr1 <- top_terms(ttm4, "type_probability", 100000))
+  tpr <- tpr[tpr$type %in% c("fellow-citizens", "senate"),]
+  tpr1 <- tpr1[tpr1$type %in% c("fellow-citizens", "senate"),]
+  expect_identical(tpr[order(tpr$type_probability),c("topic", "type_probability")],tpr1[order(tpr1$type_probability),c("topic", "type_probability")])
   
 })
+

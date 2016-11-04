@@ -18,6 +18,7 @@ Suggests:
   testthat,
   knitr,
   tidytext,
+  tidyr,
   rmarkdown,
   readr,
   Matrix,

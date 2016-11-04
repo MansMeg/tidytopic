@@ -53,7 +53,7 @@ topic_jsd <- function(x, dist, prior = 0){
 #' 
 topic_probability <- function(x, prior = NULL){
   checkmate::assert(is.tidy_topic_array(x))
-  checkmate::assert(is.null(prior) | prior == 0)
+  checkmate::assert(is.null(prior) || prior == 0) # Temporary limit
   checkmate::assert_number(prior, lower = 0, null.ok = TRUE)
   
   se_groups <- as.character(dplyr::groups(x))
@@ -62,7 +62,7 @@ topic_probability <- function(x, prior = NULL){
   n_topic <- dplyr::summarise(dplyr::group_by_(x, .dots = se_topic_groups), n=sum(n))
   if(!is.null(prior)){
     K <- length(unique(n_topic$topic))
-    eval(parse(text=paste0("n_topic <- tidyr::complete(n_topic, nesting(", paste(se_groups, collapse = ","),"), topic=1:K, fill = list(n = 0))")))
+    eval(parse(text=paste0("n_topic <- tidyr::complete(n_topic, tidyr::nesting(", paste(se_groups, collapse = ","),"), topic=1:K, fill = list(n = 0))")))
   }
   n_sum <- dplyr::summarise(dplyr::group_by_(n_topic, .dots = se_groups), 
                             n_sum=sum(n))

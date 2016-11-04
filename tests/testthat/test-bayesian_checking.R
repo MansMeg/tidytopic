@@ -10,6 +10,8 @@ test_that(desc="TODO",{
 
 test_that(desc="imi",{
   skip_on_travis()
+  expect_true(FALSE, "expect_equal order out of imi as in w, if not w is used. original order.")
+
   imi_test <- imi(sotu50)
   expect_equal(imi_test$imi[1:2], c(0.2901117, 0.7248372), tolerance = .00001)
 

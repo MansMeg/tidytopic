@@ -1,0 +1,104 @@
+---
+title: "Bayesian Checking of topic models"
+author: "Mans Magnusson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tidytopics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+Bayesian checking of topic models has been proposed by Mimno and Blei (2011) as a way of study how well a model fits data and to identify potential areas of improvements. For more details, see Mimno and Blei (2011).
+
+We start out by loading a trained topic model with 50 topics on the State of the Union Addresses.
+
+```{r}
+library(ggplot2)
+data("sotu50")
+sotu50
+```
+
+The next step is to extract the top terms. In this example we use the standard metric of the probability of a type given a topic to identify the top 10 terms by topic. See `?top_term` for details and other key term extractions. 
+
+```{r}
+top_keys <- top_terms(sotu50, "type_probability")
+top_keys
+```
+
+We start out by calculate the mutual information between types and documents for each topic. The default is to use documents as grouping variable.
+
+```{r}
+observed_mi <- mi(sotu50)
+ggplot(data = observed_mi, aes(x = mi)) + geom_histogram(bins = 20)
+```
+
+To calculate the instantaneous mutual information (IMI) we use the imi() function. We can calulate the IMI for all terms, but subseting to the most interesting terms speed up the computations. As with MI, the default grouping is documents.
+
+```{r}
+observed_imi <- imi(state = sotu50, w = top_keys)
+observed_imi
+```
+
+We can easily plot the IMI values for the top key terms.
+
+```{r}
+plt <- ggplot_imi_type(observed_imi, topic = 1)
+plt
+```
+
+
+The objects is a `ggplot2` objects so we can easily change it however we want. Allthough laying boxplots needs to invert the coordinates so we need to label the y axis with `xlab()` and vice versa.
+
+```{r}
+plt + theme_bw() + ylab("IMI") + ylim(0, 3.5) + xlab("Word type")
+```
+
+
+
+
+
+## Simulate draws of tokens from the posterior
+
+As the next step we want to study how well these values would fit given the actual model. Here this is implemented the same way as in Mimno and Blei (2011), based on one Gibbs draw and using only the sufficient statistic $n_{kw}$ for $\Phi$ to simulate the model parameters (not using $\beta$).
+
+We simulate 10 draws from the model this way by using the function `sample_tokens_given_topics()` and calculate the `imi()` for each draw.
+
+```{r}
+no_draws <- 10
+replicated_imi <- list()
+for(i in 1:no_draws){
+  sim_tokens <- sample_tokens_given_topics(sotu50)
+  replicated_imi[[i]] <- imi(sim_tokens, w = top_keys)
+}
+replicated_imi <- bind_rows(replicated_imi)
+```
+
+Using the simulated tokens we can plot the imi for data and compare it to the imi of the simulated draws.
+
+```{r}
+observed_imi
+plt <- ggplot_imi_type(observed_imi, replicated_imi, topic = 1)
+plt
+```
+
+
+
+
+## References
+
+Mimno, D., & Blei, D. (2011). Bayesian checking for topic models. In Proceedings of the Conference on Empirical Methods in Natural Language Processing (pp. 227-237). Association for Computational Linguistics.
+
+Sievert, C., & Shirley, K. E. (2014). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).
+
+
+
+## Session info
+
+This vignette was created with
+
+```{r sessioninfo, message=FALSE, warning=FALSE}
+sessionInfo()
+```

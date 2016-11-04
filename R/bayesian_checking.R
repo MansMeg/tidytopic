@@ -8,54 +8,41 @@
 #' Mimno, D. and Blei, D. Bayesian Checking for Topic Models
 #'
 #' @param state a tidy_topic_state object
-#' @param g groups TODO
-#' @param w An ungrouped tbl_df with types and topics to calculate IMI for. Default is NULL.
-#'
+#' @param g Grouping variable to use to calculate IMI. Default is 'doc'.
+#' @param w A \code{\link[tibble]{tibble}} with types and topics to calculate IMI for. Default is NULL, all types.
 #'
 #' @export
-imi <- function(state, w=NULL){
-  requireNamespace("dplyr")
-  requireNamespace("magrittr")
+imi <- function(state, g = "doc", w=NULL){
   checkmate::assert(is.tidy_topic_state(state))
+  checkmate::assert_choice(g, names(state))
   checkmate::assert(checkmate::check_class(w, "tbl_df"),
                     checkmate::check_character(w, null.ok = TRUE))
   checkmate::assert(!is.grouped_df(w))
+  
+  # Cleanup state file
+  eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(",g ,"), type, topic)")))
+  state <- dplyr::transmute(state, topic, doc, type)
 
   # Calculate H(D|k)
-  HDk <- state %>%
-    group_by(doc, topic) %>%
-    summarise(n = n()) %>%
-    group_by(topic) %>%
-    mutate(sum_n = sum(n), pmi = log(n/sum_n) * (n/sum_n), sum_n = NULL) %>%
-    summarise(HDk = sum(pmi)) %>%
-    mutate(HDk = -1 * HDk)
+  HDk <- dplyr::summarise(dplyr::group_by(state, doc, topic), n = n())
+  HDk <- dplyr::group_by(HDk, topic)
+  HDk <- dplyr::mutate(HDk, sum_n = sum(n), pmi = log(n/sum_n) * (n/sum_n), sum_n = NULL)
+  HDk <- dplyr::summarise(HDk, HDk = sum(pmi))
+  HDk <- dplyr::mutate(HDk, HDk = -1 * HDk)
 
   # Calculate H(D|W=w, k)
+  imis <- dplyr::summarise(dplyr::group_by(state, doc, type, topic), n = n())
+  imis <- dplyr::group_by(imis, type, topic)
+  imis <- dplyr::mutate(imis, sum_n = sum(n), pmi = log(n/sum_n) * (n/sum_n), sum_n = NULL)
+  imis <- dplyr::summarise(imis, imi = sum(pmi))
+  imis <- dplyr::left_join(imis, HDk, by = "topic")
+  imis <- dplyr::mutate(imis, imi = imi + HDk, HDk = NULL)
+  imis <- dplyr::arrange(imis, topic, desc(imi))
+  imis <- dplyr::ungroup(imis)  
   if(!is.null(w)) {
-    state <- state %>%
-      right_join(transmute(w, topic, type), by = c("topic", "type"))
+    imis <- dplyr::right_join(imis, w, by = c("topic", "type"))
   }
-
-  state %>%
-    group_by(doc, type, topic) %>%
-    summarise(n = n()) %>%
-    group_by(topic, type) %>%
-    mutate(sum_n = sum(n), pmi = log(n/sum_n) * (n/sum_n), sum_n = NULL) %>%
-    summarise(imi = sum(pmi)) %>%
-    left_join(HDk, by = "topic") %>%
-    mutate(imi = imi + HDk, HDk = NULL) %>%
-    ungroup()
-}
-
-#' @rdname imi
-#' @export
-imi_group <- function(state, g, w = NULL){
-  checkmate::assert(is.tidy_topic_state(state))
-  checkmate::assert_choice(g, names(state))
-
-  eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(",g ,"), pos, type, topic)")))
-  state <- dplyr::transmute(state, topic, doc, type, pos)
-  imi(state, w)
+  imis
 }
 
 #' Calculate Mutual information between types and documents (or groups)
@@ -157,33 +144,40 @@ mi_deviance <- function(true, rep){
 #' When sampling and deviation calculation this can be done using argument state and
 #' and iteration number.
 #'
-#' @param true a \code{tbl_df} with \code{imi}, \code{type}, \code{topic} and \code{rank} based on the original data.
-#' @param rep a \code{tbl_df} with \code{imi}, \code{type} by \code{topic} based on multiple replications.
-#' @param k which topic to plot
+#' @param observed_imi a \code{tbl_df} with \code{imi}, \code{type} and \code{topic}} based on the original data.
+#' @param replicated_imi a \code{tbl_df} with \code{imi}, \code{type} and \code{topic} based on multiple replications. Default is NULL, no replications used.
+#' @param topic which topic to plot
 #'
 #' @export
-plot_imi_type <- function(true, rep, k){
-  checkmate::assert_class(true, "tbl_df")
-  checkmate::assert_class(rep, "tbl_df")
-  checkmate::assert_subset(names(true), c("topic","type","rank","imi"))
-  checkmate::assert_subset(names(rep), c("topic","type","rank","imi"))
-  checkmate::assert_choice(k, unique(true$topic))
-  checkmate::assert_set_equal(unique(true$topic), unique(rep$topic))
-  checkmate::assert(nrow(true) < nrow(rep))
+ggplot_imi_type <- function(observed_imi, topic, replicated_imi = NULL){
+  checkmate::assert_class(observed_imi, "tbl_df")
+  checkmate::assert_subset(c("topic","type","imi"), names(observed_imi))
+  checkmate::assert_choice(topic, unique(observed_imi$topic))
+  
+  if(!is.null(replicated_imi)){
+    checkmate::assert_class(replicated_imi, "tbl_df")
+    checkmate::assert_subset(c("topic","type","imi"), names(observed_imi))
+    checkmate::assert_set_equal(unique(observed_imi$topic), unique(replicated_imi$topic))
+    checkmate::assert(nrow(observed_imi) <= nrow(replicated_imi))
+  }
+  k <- topic
+  observed_k <- filter(observed_imi, topic == k)
+  observed_k$type <- factor(observed_k$type,
+                            levels = rev(as.character(observed_k$type)))
 
-  true_k <- filter(true, topic == k)
-  true_k$type <- factor(true_k$type,
-                        levels = as.character(true_k$type)[order(true_k$rank, decreasing = FALSE)], ordered = TRUE)
-
-  rep_k <- filter(rep, topic == k)
-  rep_k$type <- factor(rep_k$type,
-                       levels = as.character(true_k$type)[order(true_k$rank, decreasing = FALSE)], ordered = TRUE)
-
-  p <- ggplot(rep_k, aes(type, imi)) + geom_boxplot(color = "gray", outlier.shape = NA) + coord_flip()
-  p + geom_point(data = true_k, aes(type, imi), shape = 2L)
+  if(!is.null(replicated_imi)){
+    replicated_k <- filter(replicated_imi, topic == k)
+    replicated_k$type <- factor(replicated_k$type,
+                                levels = rev(as.character(observed_k$type)))
+  }
+  
+  p <- ggplot(data = observed_k, aes(x = type, y = imi)) 
+  if(!is.null(replicated_imi)){
+    p <- p + geom_boxplot(data = replicated_k, aes(x = type, y = imi), color = "gray", outlier.shape = NA) + coord_flip()
+  }
+  p <- p + geom_point(shape = 2L) + coord_flip()
+  p + coord_flip()
 }
-
-
 #' Sample types for a given setup of topic indicators
 #'
 #' @description
@@ -196,45 +190,42 @@ plot_imi_type <- function(true, rep, k){
 #' Mimno, D. and Blei, D. Bayesian Checking for Topic Models
 #'
 #' @param state a topic model state object
+#' @param n The number of random draws of tokens given topic.
 #'
 #' @return
-#' a type vector of length of the state dataset.
+#' A tidy dataset with simulated tokens.
 #'
 #' @examples
 #' # Load the state of the union topic model
-#' # data("sotu50")
-#' # w <- sample_types_given_topic(state = sotu50)
+#' data("sotu50")
+#' w <- sample_tokens_given_topics(state = sotu50, n = 5)
 #'
 #' @export
-sample_types_given_topic <- function(state){
-  requireNamespace("dplyr")
-  requireNamespace("magrittr")
-
+sample_tokens_given_topics <- function(state, n = 1){
   checkmate::assert(is.tidy_topic_state(state))
+  checkmate::assert_number(n, lower = 1)
 
-  Nkw <- state %>%
-    dplyr::group_by(topic, type) %>%
-    dplyr::summarise(n = n()) %>%
-    ungroup()
-
+  Nkw <- topic_type_matrix(state)
+  
   # Calculate the number of tokens by topic
-  Nk <- Nkw %>%
-    dplyr::group_by(topic) %>%
-    dplyr::summarise(n = sum(n)) %>%
-    ungroup()
-
+  Nk <- dplyr::group_by(state, topic)
+  Nk <- dplyr::summarise(Nk, n = n())
+  Nk <- dplyr::ungroup(Nk)
+  
   # Calculate probability and split
-  pdfs <-
-    Nkw %>%
-    dplyr::group_by(topic) %>%
-    mutate(p = n/sum(n), type = as.integer(type)) %>%
-    ungroup() %>%
-    transmute(topic, type, p)
-  pdfs <- split(transmute(pdfs, type, p), pdfs$topic)
+  pdfs <- split(transmute(Nkw, type = as.integer(type), n), Nkw$topic)
+  
+  w <- dplyr::bind_rows(lapply(1L:n, function(x) {
+    state$sample <- x
+    state
+    }))
+  w <- dplyr::mutate(w, type = as.integer(type))
 
-  w <- integer(nrow(state))
-  for(i in 1:length(pdfs)){
-    w[state$topic == i] <- sample(pdfs[[i]]$type, size =  Nk$n[i], TRUE, pdfs[[i]]$p)
+  for(i in 1:nrow(Nk)){
+    w[["type"]][state$topic == i] <- 
+      sample(pdfs[[i]]$type, size =  Nk$n[i] * n, replace = TRUE, prob = pdfs[[i]]$n)
   }
-  factor(levels(state$type)[w], levels = levels(state$type))
+  
+  w[["type"]] <- factor(levels(state$type)[w[["type"]]], levels = levels(state$type))
+  w
 }

@@ -26,7 +26,7 @@ sotuspeaker <- read.csv("data-raw/sotuspeaker.csv")
 sotuspeaker$year <- as.integer(sotuspeaker$year)
 sotu$year <- as.integer(sotu$year)
 sotu <- left_join(sotu, sotuspeaker, by = "year")
-sotu <- sotu[,c(1,4,2,3)]
+sotu <- sotu[,c(5,2,3,1,4)]
 
 devtools::use_data(sotu, overwrite = TRUE)
 

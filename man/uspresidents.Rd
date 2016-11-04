@@ -4,7 +4,16 @@
 \name{uspresidents}
 \alias{uspresidents}
 \title{US Presidents.}
-\format{An object of class \code{data.frame} with 44 rows and 7 columns.}
+\format{A \code{\link[tibble]{tibble}} \code{data.frame} with 44 rows and 7 variables:
+\describe{
+  \item{no}{President number.}
+  \item{president}{Name of the president.}
+  \item{born}{The year the president was born.}
+  \item{died}{The year the president died. \code{NA} if alive in 2015.}
+  \item{presidency_start}{The date the presidency started.}
+  \item{presidency_end}{The date the presidency ended.}
+  \item{party}{The party of the president.}
+}}
 \source{
 \url{https://en.wikipedia.org/wiki/State_of_the_Union}
 }

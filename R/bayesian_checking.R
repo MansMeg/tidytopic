@@ -63,30 +63,21 @@ imi <- function(state, g = "doc", w=NULL){
 #'
 #' @export
 mi <- function(state){
-  requireNamespace("dplyr")
-  requireNamespace("magrittr")
   checkmate::assert(is.tidy_topic_state(state))
+  
+  state <- dplyr::group_by(state, doc, type, topic)
+  state <- dplyr::summarise(state, n = n())
+  state <- dplyr::ungroup(state)
+  
+  Ndk <- dplyr::summarise(dplyr::group_by(state, doc, topic), nd = n())
 
-  st <-
-    state %>%
-    group_by(doc, type, topic) %>%
-    summarise(n = n()) %>%
-    ungroup()
+  Nwk <- dplyr::summarise(dplyr::group_by(state, type, topic), nw = n())
 
-  Ndk <- st %>%
-    group_by(doc, topic) %>%
-    summarise(nd = n())
-
-  Nwk <- st %>%
-    group_by(type, topic) %>%
-    summarise(nw = n())
-
-  Nk <- Nwk %>%
-    group_by(topic) %>%
-    summarise(nk = sum(nw))
-
-  Nwk <- left_join(Nwk, Nk, by = c("topic"))
-
+  Nk <- dplyr::summarise(dplyr::group_by(Nwk, topic), nk = sum(nw))
+  
+  Nwk <- dplyr::left_join(Nwk, Nk, by = c("topic"))
+  
+ ####
   st %>% group_by(topic) %>%
     inner_join(Ndk, by = c("topic", "doc")) %>%
     inner_join(Nwk, by = c("topic", "type")) %>%

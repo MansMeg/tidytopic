@@ -7,11 +7,11 @@
 ggplot_imi_type(observed_imi, topic, replicated_imi = NULL)
 }
 \arguments{
-\item{observed_imi}{a \code{tbl_df} with \code{imi}, \code{type}, \code{topic} and \code{rank} based on the original data.}
+\item{observed_imi}{a \code{tbl_df} with \code{imi}, \code{type} and \code{topic} based on the original data.}
 
 \item{topic}{which topic to plot}
 
-\item{replicated_imi}{a \code{tbl_df} with \code{imi}, \code{type} by \code{topic} based on multiple replications.}
+\item{replicated_imi}{a \code{tbl_df} with \code{imi}, \code{type} and \code{topic} based on multiple replications. Default is NULL, no replications used.}
 }
 \description{
 Create IMI plot

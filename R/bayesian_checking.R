@@ -144,7 +144,7 @@ mi_deviance <- function(true, rep){
 #' When sampling and deviation calculation this can be done using argument state and
 #' and iteration number.
 #'
-#' @param observed_imi a \code{tbl_df} with \code{imi}, \code{type} and \code{topic}} based on the original data.
+#' @param observed_imi a \code{tbl_df} with \code{imi}, \code{type} and \code{topic} based on the original data.
 #' @param replicated_imi a \code{tbl_df} with \code{imi}, \code{type} and \code{topic} based on multiple replications. Default is NULL, no replications used.
 #' @param topic which topic to plot
 #'

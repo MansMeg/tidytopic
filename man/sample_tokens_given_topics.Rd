@@ -22,7 +22,7 @@ See reference for details.
 }
 \examples{
 # Load the state of the union topic model
-# data("sotu50")
+data("sotu50")
 w <- sample_tokens_given_topics(state = sotu50, n = 5)
 
 }

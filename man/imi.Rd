@@ -2,19 +2,16 @@
 % Please edit documentation in R/bayesian_checking.R
 \name{imi}
 \alias{imi}
-\alias{imi_group}
 \title{Calculate IMI}
 \usage{
-imi(state, w = NULL)
-
-imi_group(state, g, w = NULL)
+imi(state, g = "doc", w = NULL)
 }
 \arguments{
 \item{state}{a tidy_topic_state object}
 
-\item{w}{A \code{\link[tibble]{tibble}} with types and topics to calculate IMI for. Default is NULL, all types (slower).}
+\item{g}{Grouping variable to use to calculate IMI. Default is 'doc'.}
 
-\item{g}{groups TODO}
+\item{w}{A \code{\link[tibble]{tibble}} with types and topics to calculate IMI for. Default is NULL, all types.}
 }
 \description{
 Function to calculate instantanueous mutual information for types for a given topic.

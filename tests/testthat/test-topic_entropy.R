@@ -10,3 +10,16 @@ test_that(desc="topic_entropy",{
   expect_equal(H_doc[["H"]][1], 0.4505612)
 
 })
+
+test_that(desc="topic_probability",{
+  
+  expect_true(FALSE, "FIX THIS FUNCTION WITH PRIOR")
+
+})
+
+
+test_that(desc="topic_jsd",{
+  
+  expect_true(FALSE, "FIX THIS FUNCTION WITH PRIOR")
+  
+})

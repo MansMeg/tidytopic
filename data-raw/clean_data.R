@@ -17,8 +17,9 @@ sotu <- data_frame(V1 = unlist(lapply(sotu, function(x) x[1])),
                    V2 = unlist(lapply(sotu, function(x) x[2])),
                    V3 = unlist(lapply(sotu, function(x) x[3])))
 sotu$V1 <- as.numeric(unlist(lapply(stringr::str_split(sotu$V1, "-"), function(x) x[2])))
-sotu <- sotu[, c(2,1,3)] 
-names(sotu) <- c("year", "paragraph", "text")
+sotu$doc <- 1:nrow(sotu)
+sotu <- sotu[, c(4,2,1,3)] 
+names(sotu) <- c("doc", "year", "paragraph", "text")
 sotu$paragraph <- as.integer(sotu$paragraph)
 
 sotuspeaker <- read.csv("data-raw/sotuspeaker.csv")

@@ -12,7 +12,7 @@ imi_group(state, g, w = NULL)
 \arguments{
 \item{state}{a tidy_topic_state object}
 
-\item{w}{An ungrouped tbl_df with types and topics to calculate IMI for. Default is NULL.}
+\item{w}{A \code{\link[tibble]{tibble}} with types and topics to calculate IMI for. Default is NULL, all types (slower).}
 
 \item{g}{groups TODO}
 }

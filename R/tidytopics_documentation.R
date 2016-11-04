@@ -25,7 +25,7 @@ NULL
 #'   \item{no}{President number.}
 #'   \item{president}{Name of the president.}
 #'   \item{born}{The year the president was born.}
-#'   \item{died}{The year the president died. \code{NA} if alive in 2015.
+#'   \item{died}{The year the president died. \code{NA} if alive in 2015.}
 #'   \item{presidency_start}{The date the presidency started.}
 #'   \item{presidency_end}{The date the presidency ended.}
 #'   \item{party}{The party of the president.}

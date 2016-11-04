@@ -2,54 +2,168 @@
 title: "Introduction to the tidytopic package"
 author: "Mans Magnusson"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: TRUE
 vignette: >
   %\VignetteIndexEntry{tidytopics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-The tidytopics package is a toolkit for topic modeling and analysis in R. This is a short introduction to the package, the data structures and some basic functionalities. See 
+The tidytopics package is a toolkit for topic modeling and analysis in R. The main focus is to facilitate post-processing and analysis of topic models. It does not contain any samplers for topic models (right now). 
 
-## Basic data structure
+This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. For the notation used throughout this package, see the notation section below. It is built upon the ideas of data processing proposed in the `dplyr` package and the `tidytext` R package for text analysis. 
 
-The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are two main data structures in tidytopics: `tidy_topic_state` and `tidy_topic_matrix`/`tidy_topic_array`. This is a way of handling the often very large corpuses in a simple and effective way for post processing and analysis using the `tidytext` and `dplyr` R packages.
+For `dplyr` a good introduction can be found [here](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) and a god cheetsheet can be found [here](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf). The package `tidytext` has a nice introduction [here](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html) and a nice book on tidy text mining can be found [here](http://tidytextmining.com/).
 
-EXAMPLES HERE sparse matrix 
+## Vignettes
 
+This package contains the following vignettes on topic modeling.
 
-### Example: A tidy type probability matrix
+## Basic data structures
 
-Examples of type_probabilities
+The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are three main data structures in tidytopics: 
 
-Examples of topic_probabilities
+| Symbol| Description                             |
+|-------|-----------------------------------------|
+| `tidy_topic_state`  | A topic model token level state (of topic indicators $z$) |
+| `tidy_topic_array`  | A tidy array (aggregation) of topic indicators. Must have the count variable $n$ and the integer variable $topic$ |
+| `tidy_topic_matrix`  | Same as `tidy_topic_array` but can only have one other variable |
 
+The purpose is to have a way of handling the often very large corpuses in a simple and effective way and make use of the sparsity for topic model analysis.
 
-## Import and export mallet state files
+### Example
+
+The basic structure is the `tidy_topic_state`. As an example a topic model with 50 topics (one Gibbs draw) has been included for the State of the Union Addresses. Each document is a paragraph of the State of The Union Addresses.
+
+```{r, echo=FALSE}
+suppressPackageStartupMessages(library(tidytopics))
+suppressPackageStartupMessages(library(tidytext))
+suppressPackageStartupMessages(library(dplyr))
+```
 
 ```{r}
 library(tidytopics)
-library(janeaustenr)
 library(tidytext)
 library(dplyr)
-library(stringr)
 
-original_books <- austen_books() %>%
-  group_by(book) %>%
-  mutate(linenumber = row_number(),
-         chapter = cumsum(str_detect(text, regex("^chapter [\\divxlc]",
-                                                 ignore_case = TRUE)))) %>%
-  ungroup()
-
-tidy_books <- original_books %>%
-  unnest_tokens(word, text)
-
+data("sotu50")
+sotu50
+is.tidy_topic_state(sotu50)
 ```
+
+Based on this topic model state we can do post processing analyses, such as the top terms per topic:
+
+```{r}
+top_terms(sotu50)
+```
+
+We can also easily compute the type topic matrix $n_w$ or the document topic matrix $n_d$ in tidy format.
+
+```{r}
+nw <- topic_type_matrix(sotu50)
+nw
+nd <- doc_topic_matrix(sotu50)
+nd
+```
+
+These are `tidy_topic_matrix`es and also `tidy_topic_array`s. But if we add an extra variable (such as President) the resulting tibble is not longer a `tidy_topic_matrix` but a `tidy_topic_array`.
+
+```{r}
+is.tidy_topic_matrix(nw)
+is.tidy_topic_array(nw)
+
+data("sotu")
+nd <- left_join(nd, sotu[,c("doc" )], by = "doc")
+
+is.tidy_topic_matrix(nd)
+is.tidy_topic_array(nd)
+```
+
+It is also possible to convert to and from a sparse matrix object from the `Matrix` package.
+
+```{r}
+setwd("../data-raw")
+nw <- as.sparseMatrix(nw)
+nw[1:10, 1:5]
+print(getwd())
+print(dir(getwd()))
+print(dir(getwd()))
+file.exists("sotu50.txt.gz")
+```
+
+For more analytical features see the other vignettes.
+
+## Import and export topic models 
+
+Currently import and export is only possible from a mallet state file.
+
+### Mallet state files
+
+Currently the package handles importing of state files from Mallet. To fit a model with mallet see the [hompage](http://mallet.cs.umass.edu/) or use the R package [mallet](https://github.com/mimno/RMallet) to fit a model. An introduction to fit a topic model with R can be found [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mimno/RMallet/master/mallet/inst/doc/mallet.html). 
+
+The following mallet state file is not a part of this package (due to the size of the file). But to run this code you can download the file [here](https://github.com/MansMeg/tidytopics/raw/master/data-raw/sotu50.txt.gz).
+
+
+```{r, echo=FALSE}
+setwd("../data-raw")
+my_sotu <- read_mallet_statefile("sotu50.txt.gz")
+alpha <- read_mallet_statefile("sotu50.txt.gz", type = "alpha")
+beta <- read_mallet_statefile("sotu50.txt.gz", type = "beta")
+```
+
+The statefile contain the topic indicatorstates, and the hyperparameters $\alpha$ and $\beta$.
+
+```{r, eval=FALSE}
+my_sotu <- read_mallet_statefile("sotu50.txt.gz")
+alpha <- read_mallet_statefile("sotu50.txt.gz", type = "alpha")
+beta <- read_mallet_statefile("sotu50.txt.gz", type = "beta")
+```
+
+```{r, eval=TRUE}
+my_sotu
+alpha[1:5]
+beta
+```
+
+It is also possible to write out the current state file to a mallet state format.
+
+```{r, eval=FALSE}
+write_mallet_statefile(state = my_sotu, 
+                       alpha = alpha,
+                       beta = beta,
+                       state_file = "my_mallet_state.txt.gz")
+```
+
+
+## Topic model notation used in this package
+
+The general notation in this package is as follows:
+
+| Symbol| Description                             |
+|-------|-----------------------------------------|
+| $V$   | Vocabulary size. Number of unique terms/types. |
+| $D$   | The number of documents.                |
+| $K$   | The number of topics.                   |
+| $N$   | The number of tokens.                   |
+| $N_d$ | The number of tokens in document $d$.   |
+| $w_{i,d}$ | Token $i$ in document $d$   |
+| $v_{i,d}$ | Type of token $i$ in document $d$ |
+| $z_{i,d}$ | Topic indicator for token $i$ in document $d$   |
+| $\Phi$ | Dirichlet distribution over types by topic of size $(K \times V)$  |
+| $\phi_k$ | Dirichlet distribution over types for topic $k$. |
+| $\Theta$ | Dirichlet distribution over topics by documents of size $(D \times K)$ |
+| $\theta_d$ | Dirichlet distribution over topics for document $d$. |
+| $n_w$ | Topic indicator counts by topics and types of size $(K \times V)$. |
+| $n_d$ | Topic indicator counts by documents and topic of size $(D \times K)$. |
+| $beta_{k,d}$ | Prior for $\Phi_{k,d}$. |
+| $alpha_{k,d}$ | Prior for $\Theta_{k,d}$. |
 
 
 ## Session info
 
-This vignette was created with
+This vignette was created with:
 
 ```{r sessioninfo, message=FALSE, warning=FALSE}
 sessionInfo()

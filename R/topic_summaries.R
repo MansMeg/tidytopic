@@ -41,8 +41,8 @@
 #' 
 #' @export
 top_terms <- function(x, scheme = "type_probability", j = 10, beta = 0, ...){
-  checkmate::assert(is.tidy_topic_state(x), is.tidy_topic_matrix(x))
-  if(is.tidy_topic_matrix(x)) checkmate::assert_subset("type", names(x))
+  checkmate::assert(is.tidy_topic_state(x), is.tidy_topic_array(x))
+  if(is.tidy_topic_array(x)) checkmate::assert_subset(c("type","topic"), names(x))
   checkmate::assert_int(j, lower = 1)
   checkmate::assert_number(beta, lower = 0)
   checkmate::assert_choice(scheme, c("n_wk", "type_probability", "topic_probability", "term_score", "relevance"))

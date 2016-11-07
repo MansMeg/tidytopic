@@ -192,7 +192,7 @@ sample_tokens_given_topics <- function(state, n = 1){
   Nk <- dplyr::ungroup(Nk)
   
   # Calculate probability and split
-  pdfs <- split(transmute(Nkw, type = as.integer(type), n), Nkw$topic)
+  pdfs <- split(dplyr::transmute(Nkw, type = as.integer(type), n), Nkw$topic)
   
   w <- dplyr::bind_rows(lapply(1L:n, function(x) {
     state$sample <- x

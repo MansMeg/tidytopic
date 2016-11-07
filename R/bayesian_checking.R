@@ -66,8 +66,8 @@ mi <- function(state, g = "doc"){
   checkmate::assert(is.tidy_topic_state(state))
   checkmate::assert_choice(g, names(state))
   
-  eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(", g ,"), pos, type, topic)")))
-  state <- dplyr::transmute(state, topic, doc, type, pos)
+  eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(", g ,"), type, topic)")))
+  state <- dplyr::transmute(state, topic, doc, type)
   
   state <- dplyr::group_by(state, doc, type, topic)
   state <- dplyr::summarise(state, n = n())
@@ -96,23 +96,23 @@ mi <- function(state, g = "doc"){
 #' When sampling and deviation calculation this can be done using argument state and
 #' and iteration number.
 #'
-#' @param true a \code{tbl_df} with \code{mi} by \code{topic} based on the original data
-#' @param rep a \code{tbl_df} with \code{mi} by \code{topic} based on multiple replications
+#' @param observed a \code{tbl_df} with \code{mi} by \code{topic} based on the observed data.
+#' @param replicated a \code{tbl_df} with \code{mi} by \code{topic} based on multiple replications.
 #'
 #' @export
-mi_deviance <- function(true, rep){
-  checkmate::assert_class(true, "tbl_df")
-  checkmate::assert_class(rep, "tbl_df")
-  checkmate::assert_subset(names(true), c("topic","mi"))
-  checkmate::assert_subset(names(rep), c("topic","mi"))
-  checkmate::assert_set_equal(unique(true$topic), unique(rep$topic))
-  checkmate::assert(nrow(true) < nrow(rep))
-  requireNamespace("magrittr")
+mi_deviance <- function(observed, replicated){
+  checkmate::assert_class(observed, "tbl_df")
+  checkmate::assert_class(replicated, "tbl_df")
+  checkmate::assert_subset(names(observed), c("topic","mi"))
+  checkmate::assert_subset(names(replicated), c("topic","mi"))
+  checkmate::assert_set_equal(unique(observed$topic), unique(replicated$topic))
+  checkmate::assert(nrow(observed) < nrow(replicated))
 
-  group_by(rep, topic) %>%
-    summarise(mean = mean(mi), sd = stats::sd(mi)) %>%
-    full_join(true, by = "topic") %>%
-    transmute(deviance = (mi - mean) / sd)
+  dev <- dplyr::group_by(replicated, topic)
+  dev <- dplyr::summarise(dev, mi_mean = mean(mi), std = stats::sd(mi))
+  dev <- dplyr::full_join(dev, observed, by = "topic")
+  dev <- dplyr::transmute(dev,deviance = (mi - mi_mean) / std)
+  dev
 }
 
 
@@ -135,7 +135,7 @@ ggplot_imi_type <- function(observed_imi, topic, replicated_imi = NULL){
   
   if(!is.null(replicated_imi)){
     checkmate::assert_class(replicated_imi, "tbl_df")
-    checkmate::assert_subset(c("topic","type","imi"), names(observed_imi))
+    checkmate::assert_subset(c("topic","type","imi"), names(replicated_imi))
     checkmate::assert_set_equal(unique(observed_imi$topic), unique(replicated_imi$topic))
     checkmate::assert(nrow(observed_imi) <= nrow(replicated_imi))
   }

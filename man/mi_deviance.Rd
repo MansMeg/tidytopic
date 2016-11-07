@@ -4,12 +4,12 @@
 \alias{mi_deviance}
 \title{Calculate MI deviance}
 \usage{
-mi_deviance(true, rep)
+mi_deviance(observed, replicated)
 }
 \arguments{
-\item{true}{a \code{tbl_df} with \code{mi} by \code{topic} based on the original data}
+\item{observed}{a \code{tbl_df} with \code{mi} by \code{topic} based on the observed data.}
 
-\item{rep}{a \code{tbl_df} with \code{mi} by \code{topic} based on multiple replications}
+\item{replicated}{a \code{tbl_df} with \code{mi} by \code{topic} based on multiple replications.}
 }
 \description{
 Calculate MI deviance

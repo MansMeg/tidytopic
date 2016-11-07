@@ -2,17 +2,14 @@
 % Please edit documentation in R/bayesian_checking.R
 \name{mi}
 \alias{mi}
-\alias{mi_group}
 \title{Calculate Mutual information between types and documents (or groups)}
 \usage{
-mi(state)
-
-mi_group(state, g)
+mi(state, g = "doc")
 }
 \arguments{
 \item{state}{A topic model state file}
 
-\item{g}{A character element as a name of a grouping variable in \code{state} (factor or integer).}
+\item{g}{A character element as a name of a grouping variable in \code{state} (factor or integer). Default is \code{doc}.}
 }
 \description{
 Function to calculate mutual information between types and documents (MI(D,W|k))

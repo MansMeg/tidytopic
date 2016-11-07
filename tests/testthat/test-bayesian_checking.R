@@ -1,49 +1,62 @@
 context("mi/imi")
 
 data("sotu50")
-
-test_that(desc="TODO",{
-  skip_on_travis()
-  expect_true(FALSE, info = "combine imi and imi_group to one function")
-  expect_true(FALSE, info = "combine mi and mi_group to one function")
-})
+library(dplyr)
 
 test_that(desc="imi",{
-  skip_on_travis()
-  expect_true(FALSE, "expect_equal order out of imi as in w, if not w is used. original order.")
-
   imi_test <- imi(sotu50)
-  expect_equal(imi_test$imi[1:2], c(0.2901117, 0.7248372), tolerance = .00001)
-
+  
+  imi_senate11 <- filter(imi_test, type %in% c("senate"), topic == 11)
+  expect_equal(imi_senate11[["imi"]], 1.019471, tolerance = .00001)
+  
+  imi_satisfaction10 <- filter(imi_test, type == c("satisfaction"), topic == 10)
+  expect_equal(imi_satisfaction10[["imi"]], 3.423595, tolerance = .00001)
+  
   w <- top_terms(sotu50, scheme = "type_probability", 3)
-  w <- dplyr::group_by(w, type)
   expect_error(imi_test <- imi(sotu50, w))
 
-  w <- ungroup(w)
-  expect_silent(imi_test <- imi(sotu50, w))
+  expect_silent(imi_test <- imi(sotu50, w = w))
   expect_equal(nrow(imi_test), nrow(w))
+  
+  # Check that the same order is used
+  expect_equal(imi_test$type, w$type)
 })
 
-test_that(desc="group_imi",{
-  skip_on_travis()
+test_that(desc="grouped imi",{
   sotu50$group <- sample(1:4, size = nrow(sotu50), replace = TRUE)
-  # TODO
-  expect_error(imi_test <- imi_group(sotu50, "group"))
+  expect_error(imi_test <- imi(sotu50, "group"))
   sotu50$group <- as.factor(sotu50$group)
-  expect_silent(imi_test <- imi_group(sotu50, "group"))
+  expect_silent(imi_test <- imi(sotu50, "group"))
+  
+  imi_senate11 <- filter(imi_test, type %in% c("senate"), topic == 11)
+  expect_equal(imi_senate11[["imi"]], 0.009209546, tolerance = .00001)
+  
+  imi_satisfaction10 <- filter(imi_test, type == c("satisfaction"), topic == 10)
+  expect_equal(imi_satisfaction10[["imi"]], 0.01505211, tolerance = .00001)
+  
 })
 
 test_that(desc="mi",{
-  skip_on_travis()
   mi_test <- mi(state = sotu50)
-  expect_equal(mi_test$mi[1:2], c(3.737234, 4.032572), tolerance = .00001)
+
+  mi_11 <- filter(mi_test, topic == 11)
+  expect_equal(mi_11[["mi"]], 3.262207, tolerance = .00001)
+  
+  mi_33 <- filter(mi_test, topic == 33)
+  expect_equal(mi_33[["mi"]], 4.094353, tolerance = .00001)
+  
 })
 
-test_that(desc="group_mi",{
-  skip_on_travis()
+test_that(desc="grouped mi",{
   sotu50$group <- sample(1:4, size = nrow(sotu50), replace = TRUE)
-  expect_error(mi_test <- mi_group(sotu50, "group"))
+  expect_error(mi_test <- mi(sotu50, "group"))
   sotu50$group <- as.factor(sotu50$group)
-  expect_silent(mi_test <- mi_group(sotu50, "group"))
+  expect_silent(mi_test <- mi(sotu50, "group"))
+  
+  mi_11 <- filter(mi_test, topic == 11)
+  expect_equal(mi_11[["mi"]], 10.88064, tolerance = .00001)
+  
+  mi_33 <- filter(mi_test, topic == 33)
+  expect_equal(mi_33[["mi"]], 4.092041, tolerance = .00001)
 })
 

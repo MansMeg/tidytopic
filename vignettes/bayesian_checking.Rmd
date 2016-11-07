@@ -57,23 +57,23 @@ plt + theme_bw() + ylab("IMI") + ylim(0, 3.5) + xlab("Word type")
 ```
 
 
-
-
-
 ## Simulate draws of tokens from the posterior
 
 As the next step we want to study how well these values would fit given the actual model. Here this is implemented the same way as in Mimno and Blei (2011), based on one Gibbs draw and using only the sufficient statistic $n_{kw}$ for $\Phi$ to simulate the model parameters (not using $\beta$).
 
-We simulate 10 draws from the model this way by using the function `sample_tokens_given_topics()` and calculate the `imi()` for each draw.
+We simulate 10 draws from the model this way by using the function `sample_tokens_given_topics()` and calculate the `imi()` and `mi()` for each draw. This is mainly to save memory, so the calculation take some time to run.
 
 ```{r}
-no_draws <- 10
+no_draws <- 25
 replicated_imi <- list()
+replicated_mi <- list()
 for(i in 1:no_draws){
   sim_tokens <- sample_tokens_given_topics(sotu50)
   replicated_imi[[i]] <- imi(sim_tokens, w = top_keys)
+  replicated_mi[[i]] <- mi(sim_tokens)
 }
 replicated_imi <- bind_rows(replicated_imi)
+replicated_mi <- bind_rows(replicated_mi)
 ```
 
 Using the simulated tokens we can plot the imi for data and compare it to the imi of the simulated draws.
@@ -84,15 +84,105 @@ plt <- ggplot_imi_type(observed_imi, replicated_imi, topic = 1)
 plt
 ```
 
+We can now also use the replicated MI to study how the similated deviance is different from the observed value. We look at topic 1, the replicated values and compare it to the true value.
+
+```{r}
+ggplot(data = filter(replicated_mi, topic == 1), aes(x = mi)) +
+  geom_histogram(bins = 100) + 
+  xlim(c(3,5)) + 
+  geom_vline(xintercept =filter(observed_mi, topic == 1)[["mi"]])
+```
+
+Based on this we can calculate the deviance of that topic, the standardized distance between the replicated values and the true value.  
+
+```{r}
+mi_dev <- mi_deviance(observed_mi, replicated_mi)
+ggplot(data = mi_dev, aes(x = deviance)) + geom_histogram(bins = 30)
+```
+
+## Searching for systematic deviations
+
+With these tools we can search for systematic discrepancies in the data. In this example we study the grouping of the State of the Union Addresses by president and by year. We start by reading in this meta data and add it to the model state file. 
+
+To compare the results of the presidential grouping we will also create a random grouping into 43 groups to be able to compare the deviance. 
+
+```{r}
+data(sotu)
+doc_pres <- 
+  transmute(sotu, doc, president, 
+            random_group = sample(1:43, nrow(sotu), replace = TRUE))
+sotu50 <- left_join(sotu50, y = doc_pres, by = "doc")
+```
+
+We start out by calculate the grouped IMI and MI by using presidents and the random group as the grouping variable $g$. 
+
+```{r}
+observed_mi_president <- mi(sotu50, g = "president")
+observed_mi_random_group <- mi(sotu50, g = "random_group")
+observed_imi_president <- imi(sotu50, g = "president", w = top_keys)
+observed_imi_random_group <- imi(sotu50, g = "random_group", w = top_keys)
+```
+
+We use this grouping to calculate MI on based on simulated data. Once again this may take some time to calculate.
+
+```{r}
+no_draws <- 25
+replicated_mi_president <- list()
+replicated_mi_random_group <- list()
+replicated_imi_president <- list()
+replicated_imi_random_group <- list()
+for(i in 1:no_draws){
+  sim_tokens <- sample_tokens_given_topics(sotu50)
+  replicated_mi_president[[i]] <- 
+    mi(sim_tokens, g = "president")
+  replicated_imi_president[[i]] <- 
+    imi(sim_tokens, g = "president", w = top_keys)
+  replicated_mi_random_group[[i]] <- 
+    mi(sim_tokens, g = "president")
+  replicated_imi_random_group[[i]] <- 
+    imi(sim_tokens, g = "president", w = top_keys)
+}
+replicated_mi_president <- bind_rows(replicated_mi_president)
+replicated_mi_random_group <- bind_rows(replicated_mi_president)
+replicated_imi_president <- bind_rows(replicated_imi_president)
+replicated_imi_random_group <- bind_rows(replicated_imi_random_group)
+```
+
+Based on these grouped MI calculations we can study how the deviance is distributed compared to using documents and the random group as the grouping variable.
+
+```{r}
+mi_dev_pres <- 
+  mi_deviance(observed_mi_president, replicated_mi_president) %>%
+  mutate(g = "president")
+mi_dev_rg <- 
+  mi_deviance(observed_mi_random_group, replicated_mi_random_group) %>%
+  mutate(g = "random_group")
+mi_dev <- 
+  mi_deviance(observed_mi, replicated_mi) %>%
+  mutate(g = "doc")  %>%
+  bind_rows(mi_dev_pres, mi_dev_rg)
+
+ggplot(data = mi_dev, aes(x = g, y = deviance)) + 
+  geom_boxplot() + 
+  coord_flip()
+```
+
+As we can see, the deviance of grouping by president is much higher than a random grouping with equal number of groups. Indicating that
+
+We can also study the IMI of, as an example, topic 1 using president as the grouping variable compared to using each document and a random grouping. 
+
+```{r}
+ggplot_imi_type(observed_imi = observed_imi_president, replicated_imi = replicated_imi_president, topic = 1)
+
+ggplot_imi_type(observed_imi = observed_imi_random_group, replicated_imi = replicated_imi_random_group, topic = 1)
+```
+
 
 
 
 ## References
 
 Mimno, D., & Blei, D. (2011). Bayesian checking for topic models. In Proceedings of the Conference on Empirical Methods in Natural Language Processing (pp. 227-237). Association for Computational Linguistics.
-
-Sievert, C., & Shirley, K. E. (2014). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).
-
 
 
 ## Session info

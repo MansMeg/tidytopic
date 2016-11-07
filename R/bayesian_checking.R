@@ -59,11 +59,15 @@ imi <- function(state, g = "doc", w=NULL){
 #' Mimno, D. and Blei, D. Bayesian Checking for Topic Models
 #'
 #' @param state A topic model state file
-#' @param g A character element as a name of a grouping variable in \code{state} (factor or integer).
+#' @param g A character element as a name of a grouping variable in \code{state} (factor or integer). Default is \code{doc}.
 #'
 #' @export
-mi <- function(state){
+mi <- function(state, g = "doc"){
   checkmate::assert(is.tidy_topic_state(state))
+  checkmate::assert_choice(g, names(state))
+  
+  eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(", g ,"), pos, type, topic)")))
+  state <- dplyr::transmute(state, topic, doc, type, pos)
   
   state <- dplyr::group_by(state, doc, type, topic)
   state <- dplyr::summarise(state, n = n())
@@ -85,23 +89,6 @@ mi <- function(state){
   
   state
 }
-
-#' @rdname mi
-#' @export
-mi_group <- function(state, g){
-  checkmate::assert(is.tidy_topic_state(state))
-  checkmate::assert_choice(g, names(state))
-  # FIX THIS ASSERTION
-#  checkmate::assert_choice(apply(state, 2, class)[g], "factor")
-
-  eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(", g ,"), pos, type, topic)")))
-  state <- dplyr::transmute(state, topic, doc, type, pos)
-  mi(state)
-}
-
-
-
-
 
 #' Calculate MI deviance
 #'

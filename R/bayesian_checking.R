@@ -77,12 +77,13 @@ mi <- function(state){
   
   Nwk <- dplyr::left_join(Nwk, Nk, by = c("topic"))
   
- ####
-  st %>% group_by(topic) %>%
-    inner_join(Ndk, by = c("topic", "doc")) %>%
-    inner_join(Nwk, by = c("topic", "type")) %>%
-    mutate(part_mi = n/nk * log((n * nk)/(nd * nw))) %>%
-    summarise(mi = sum(part_mi))
+  state <- dplyr::group_by(state, topic)
+  state <- dplyr::inner_join(state, Ndk, by = c("topic", "doc"))
+  state <- dplyr::inner_join(state, Nwk, by = c("topic", "type"))
+  state <- dplyr::mutate(state, part_mi = n/nk * log((n * nk)/(nd * nw)))
+  state <- dplyr::summarise(state, mi = sum(part_mi))
+  
+  state
 }
 
 #' @rdname mi

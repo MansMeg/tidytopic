@@ -21,6 +21,9 @@ For `dplyr` a good introduction can be found [here](https://cran.rstudio.com/web
 
 This package contains the following vignettes on topic modeling.
 
+- **Bayesian Checking of Topic Models**
+
+
 ## Basic data structures
 
 The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are three main data structures in tidytopics: 
@@ -84,13 +87,8 @@ is.tidy_topic_array(nd)
 It is also possible to convert to and from a sparse matrix object from the `Matrix` package.
 
 ```{r}
-setwd("../data-raw")
 nw <- as.sparseMatrix(nw)
 nw[1:10, 1:5]
-print(getwd())
-print(dir(getwd()))
-print(dir(getwd()))
-file.exists("sotu50.txt.gz")
 ```
 
 For more analytical features see the other vignettes.
@@ -107,10 +105,9 @@ The following mallet state file is not a part of this package (due to the size o
 
 
 ```{r, echo=FALSE}
-setwd("../data-raw")
-my_sotu <- read_mallet_statefile("sotu50.txt.gz")
-alpha <- read_mallet_statefile("sotu50.txt.gz", type = "alpha")
-beta <- read_mallet_statefile("sotu50.txt.gz", type = "beta")
+my_sotu <- read_mallet_statefile("../data-raw/sotu50.txt.gz")
+alpha <- read_mallet_statefile("../data-raw/sotu50.txt.gz", type = "alpha")
+beta <- read_mallet_statefile("../data-raw/sotu50.txt.gz", type = "beta")
 ```
 
 The statefile contain the topic indicatorstates, and the hyperparameters $\alpha$ and $\beta$.

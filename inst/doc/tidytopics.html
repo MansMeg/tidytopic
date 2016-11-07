@@ -12,7 +12,7 @@
 
 <meta name="author" content="Mans Magnusson" />
 
-<meta name="date" content="2016-10-29" />
+<meta name="date" content="2016-11-07" />
 
 <title>Introduction to the tidytopic package</title>
 
@@ -70,42 +70,299 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to the tidytopic package</h1>
 <h4 class="author"><em>Mans Magnusson</em></h4>
-<h4 class="date"><em>2016-10-29</em></h4>
+<h4 class="date"><em>2016-11-07</em></h4>
 
 
-
-<p>The tidytopics package is a toolkit for topic modeling and analysis in R. This is a short introduction to the package, the data structures and some basic functionalities. See</p>
-<div id="basic-data-structure" class="section level2">
-<h2>Basic data structure</h2>
-<p>The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are two main data structures in tidytopics: <code>tidy_topic_state</code> and <code>tidy_topic_matrix</code>/<code>tidy_topic_array</code>. This is a way of handling the often very large corpuses in a simple and effective way for post processing and analysis using the <code>tidytext</code> and <code>dplyr</code> R packages.</p>
-<p>EXAMPLES HERE sparse matrix</p>
-<div id="example-a-tidy-type-probability-matrix" class="section level3">
-<h3>Example: A tidy type probability matrix</h3>
-<p>Examples of type_probabilities</p>
-<p>Examples of topic_probabilities</p>
+<div id="TOC">
+<ul>
+<li><a href="#vignettes">Vignettes</a></li>
+<li><a href="#basic-data-structures">Basic data structures</a><ul>
+<li><a href="#example">Example</a></li>
+</ul></li>
+<li><a href="#import-and-export-topic-models">Import and export topic models</a><ul>
+<li><a href="#mallet-state-files">Mallet state files</a></li>
+</ul></li>
+<li><a href="#topic-model-notation-used-in-this-package">Topic model notation used in this package</a></li>
+<li><a href="#session-info">Session info</a></li>
+</ul>
 </div>
+
+<p>The tidytopics package is a toolkit for topic modeling and analysis in R. The main focus is to facilitate post-processing and analysis of topic models. It does not contain any samplers for topic models (right now).</p>
+<p>This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. For the notation used throughout this package, see the notation section below. It is built upon the ideas of data processing proposed in the <code>dplyr</code> package and the <code>tidytext</code> R package for text analysis.</p>
+<p>For <code>dplyr</code> a good introduction can be found <a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html">here</a> and a god cheetsheet can be found <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">here</a>. The package <code>tidytext</code> has a nice introduction <a href="https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html">here</a> and a nice book on tidy text mining can be found <a href="http://tidytextmining.com/">here</a>.</p>
+<div id="vignettes" class="section level2">
+<h2>Vignettes</h2>
+<p>This package contains the following vignettes on topic modeling.</p>
 </div>
-<div id="import-and-export-mallet-state-files" class="section level2">
-<h2>Import and export mallet state files</h2>
+<div id="basic-data-structures" class="section level2">
+<h2>Basic data structures</h2>
+<p>The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are three main data structures in tidytopics:</p>
+<table style="width:69%;">
+<colgroup>
+<col width="11%"></col>
+<col width="58%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>tidy_topic_state</code></td>
+<td>A topic model token level state (of topic indicators <span class="math inline">\(z\)</span>)</td>
+</tr>
+<tr class="even">
+<td><code>tidy_topic_array</code></td>
+<td>A tidy array (aggregation) of topic indicators. Must have the count variable <span class="math inline">\(n\)</span> and the integer variable <span class="math inline">\(topic\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>tidy_topic_matrix</code></td>
+<td>Same as <code>tidy_topic_array</code> but can only have one other variable</td>
+</tr>
+</tbody>
+</table>
+<p>The purpose is to have a way of handling the often very large corpuses in a simple and effective way and make use of the sparsity for topic model analysis.</p>
+<div id="example" class="section level3">
+<h3>Example</h3>
+<p>The basic structure is the <code>tidy_topic_state</code>. As an example a topic model with 50 topics (one Gibbs draw) has been included for the State of the Union Addresses. Each document is a paragraph of the State of The Union Addresses.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidytopics)
-<span class="kw">library</span>(janeaustenr)
 <span class="kw">library</span>(tidytext)
 <span class="kw">library</span>(dplyr)
-<span class="kw">library</span>(stringr)
 
-original_books &lt;-<span class="st"> </span><span class="kw">austen_books</span>() %&gt;%
-<span class="st">  </span><span class="kw">group_by</span>(book) %&gt;%
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">linenumber =</span> <span class="kw">row_number</span>(),
-         <span class="dt">chapter =</span> <span class="kw">cumsum</span>(<span class="kw">str_detect</span>(text, <span class="kw">regex</span>(<span class="st">&quot;^chapter [</span><span class="ch">\\</span><span class="st">divxlc]&quot;</span>,
-                                                 <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)))) %&gt;%
-<span class="st">  </span><span class="kw">ungroup</span>()
+<span class="kw">data</span>(<span class="st">&quot;sotu50&quot;</span>)
+sotu50</code></pre></div>
+<pre><code>## # A tibble: 680,947 × 3
+##      doc            type topic
+##    &lt;int&gt;          &lt;fctr&gt; &lt;int&gt;
+## 1      1 fellow-citizens    11
+## 2      1          senate    11
+## 3      1           house    11
+## 4      1 representatives    11
+## 5      2         meeting    10
+## 6      2            feel    33
+## 7      2    satisfaction    10
+## 8      2          repeat    10
+## 9      2 congratulations    33
+## 10     2       favorable    10
+## # ... with 680,937 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.tidy_topic_state</span>(sotu50)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>Based on this topic model state we can do post processing analyses, such as the top terms per topic:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">top_terms</span>(sotu50)</code></pre></div>
+<pre><code>## # A tibble: 500 × 3
+##          type topic type_probability
+##        &lt;fctr&gt; &lt;int&gt;            &lt;dbl&gt;
+## 1       canal     1       0.03618711
+## 2      states     1       0.03206826
+## 3     pacific     1       0.03074434
+## 4      panama     1       0.02559576
+## 5      united     1       0.02191821
+## 6   nicaragua     1       0.01912327
+## 7     isthmus     1       0.01838776
+## 8  government     1       0.01765225
+## 9     central     1       0.01721094
+## 10    america     1       0.01632833
+## # ... with 490 more rows</code></pre>
+<p>We can also easily compute the type topic matrix <span class="math inline">\(n_w\)</span> or the document topic matrix <span class="math inline">\(n_d\)</span> in tidy format.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nw &lt;-<span class="st"> </span><span class="kw">topic_type_matrix</span>(sotu50)
+nw</code></pre></div>
+<pre><code>## # A tibble: 56,549 × 3
+##    topic            type     n
+##    &lt;int&gt;          &lt;fctr&gt; &lt;int&gt;
+## 1      8 fellow-citizens     1
+## 2     10 fellow-citizens    32
+## 3     11 fellow-citizens    64
+## 4     25 fellow-citizens    10
+## 5     33 fellow-citizens    12
+## 6      7          senate    15
+## 7     11          senate   291
+## 8     18          senate    24
+## 9     26          senate    26
+## 10    39          senate   217
+## # ... with 56,539 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span><span class="kw">doc_topic_matrix</span>(sotu50)
+nd</code></pre></div>
+<pre><code>## # A tibble: 109,178 × 3
+##      doc topic     n
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1      1    11     4
+## 2      2     8     3
+## 3      2    10     9
+## 4      2    33     7
+## 5      2    46     1
+## 6      3     8    19
+## 7      3    10    22
+## 8      4     7    12
+## 9      4    10    15
+## 10     4    12     1
+## # ... with 109,168 more rows</code></pre>
+<p>These are <code>tidy_topic_matrix</code>es and also <code>tidy_topic_array</code>s. But if we add an extra variable (such as President) the resulting tibble is not longer a <code>tidy_topic_matrix</code> but a <code>tidy_topic_array</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.tidy_topic_matrix</span>(nw)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.tidy_topic_array</span>(nw)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;sotu&quot;</span>)
+nd &lt;-<span class="st"> </span><span class="kw">left_join</span>(nd, sotu[,<span class="kw">c</span>(<span class="st">&quot;doc&quot;</span> )], <span class="dt">by =</span> <span class="st">&quot;doc&quot;</span>)
 
-tidy_books &lt;-<span class="st"> </span>original_books %&gt;%
-<span class="st">  </span><span class="kw">unnest_tokens</span>(word, text)</code></pre></div>
+<span class="kw">is.tidy_topic_matrix</span>(nd)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.tidy_topic_array</span>(nd)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>It is also possible to convert to and from a sparse matrix object from the <code>Matrix</code> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;../data-raw&quot;</span>)
+nw &lt;-<span class="st"> </span><span class="kw">as.sparseMatrix</span>(nw)
+nw[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
+<pre><code>## 10 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
+##    fellow-citizens senate house representatives meeting
+## 1                .      .     .               .       .
+## 2                .      .     .               .       .
+## 3                .      .     .               .       .
+## 4                .      .     .               .       .
+## 5                .      .     .               .       .
+## 6                .      .     .               .       .
+## 7                .     15     .               .      27
+## 8                1      .     .               .       .
+## 9                .      .     .               .       .
+## 10              32      .     .              31      33</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">getwd</span>())</code></pre></div>
+<pre><code>## [1] &quot;/Users/manma97/Dropbox (Personlig)/Projekt/tidytopics/data-raw&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">dir</span>(<span class="kw">getwd</span>()))</code></pre></div>
+<pre><code>## [1] &quot;clean_data.R&quot;                     &quot;presidents.csv&quot;                  
+## [3] &quot;sotu50.txt.gz&quot;                    &quot;sotuspeaker.csv&quot;                 
+## [5] &quot;state_of_the_union_1790_2009.txt&quot; &quot;stats.txt&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">dir</span>(<span class="kw">getwd</span>()))</code></pre></div>
+<pre><code>## [1] &quot;clean_data.R&quot;                     &quot;presidents.csv&quot;                  
+## [3] &quot;sotu50.txt.gz&quot;                    &quot;sotuspeaker.csv&quot;                 
+## [5] &quot;state_of_the_union_1790_2009.txt&quot; &quot;stats.txt&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.exists</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>For more analytical features see the other vignettes.</p>
+</div>
+</div>
+<div id="import-and-export-topic-models" class="section level2">
+<h2>Import and export topic models</h2>
+<p>Currently import and export is only possible from a mallet state file.</p>
+<div id="mallet-state-files" class="section level3">
+<h3>Mallet state files</h3>
+<p>Currently the package handles importing of state files from Mallet. To fit a model with mallet see the <a href="http://mallet.cs.umass.edu/">hompage</a> or use the R package <a href="https://github.com/mimno/RMallet">mallet</a> to fit a model. An introduction to fit a topic model with R can be found <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/mimno/RMallet/master/mallet/inst/doc/mallet.html">here</a>.</p>
+<p>The following mallet state file is not a part of this package (due to the size of the file). But to run this code you can download the file <a href="https://github.com/MansMeg/tidytopics/raw/master/data-raw/sotu50.txt.gz">here</a>.</p>
+<p>The statefile contain the topic indicatorstates, and the hyperparameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_sotu &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>)
+alpha &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;alpha&quot;</span>)
+beta &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;beta&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_sotu</code></pre></div>
+<pre><code>## # A tibble: 680,947 × 4
+##      doc   pos            type topic
+##    &lt;int&gt; &lt;int&gt;          &lt;fctr&gt; &lt;int&gt;
+## 1      1     1 fellow-citizens    11
+## 2      1     2          senate    11
+## 3      1     3           house    11
+## 4      1     4 representatives    11
+## 5      2     1         meeting    10
+## 6      2     2            feel    33
+## 7      2     3    satisfaction    10
+## 8      2     4          repeat    10
+## 9      2     5 congratulations    33
+## 10     2     6       favorable    10
+## # ... with 680,937 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">alpha[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
+<pre><code>## [1] 0.02136692 0.01317826 0.03399012 0.04877238 0.05565182</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">beta</code></pre></div>
+<pre><code>## [1] 0.01228582</code></pre>
+<p>It is also possible to write out the current state file to a mallet state format.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write_mallet_statefile</span>(<span class="dt">state =</span> my_sotu, 
+                       <span class="dt">alpha =</span> alpha,
+                       <span class="dt">beta =</span> beta,
+                       <span class="dt">state_file =</span> <span class="st">&quot;my_mallet_state.txt.gz&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="topic-model-notation-used-in-this-package" class="section level2">
+<h2>Topic model notation used in this package</h2>
+<p>The general notation in this package is as follows:</p>
+<table style="width:69%;">
+<colgroup>
+<col width="11%"></col>
+<col width="58%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(V\)</span></td>
+<td>Vocabulary size. Number of unique terms/types.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(D\)</span></td>
+<td>The number of documents.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(K\)</span></td>
+<td>The number of topics.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(N\)</span></td>
+<td>The number of tokens.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(N_d\)</span></td>
+<td>The number of tokens in document <span class="math inline">\(d\)</span>.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(w_{i,d}\)</span></td>
+<td>Token <span class="math inline">\(i\)</span> in document <span class="math inline">\(d\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(v_{i,d}\)</span></td>
+<td>Type of token <span class="math inline">\(i\)</span> in document <span class="math inline">\(d\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(z_{i,d}\)</span></td>
+<td>Topic indicator for token <span class="math inline">\(i\)</span> in document <span class="math inline">\(d\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\Phi\)</span></td>
+<td>Dirichlet distribution over types by topic of size <span class="math inline">\((K \times V)\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\phi_k\)</span></td>
+<td>Dirichlet distribution over types for topic <span class="math inline">\(k\)</span>.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\Theta\)</span></td>
+<td>Dirichlet distribution over topics by documents of size <span class="math inline">\((D \times K)\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\theta_d\)</span></td>
+<td>Dirichlet distribution over topics for document <span class="math inline">\(d\)</span>.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(n_w\)</span></td>
+<td>Topic indicator counts by topics and types of size <span class="math inline">\((K \times V)\)</span>.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(n_d\)</span></td>
+<td>Topic indicator counts by documents and topic of size <span class="math inline">\((D \times K)\)</span>.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(beta_{k,d}\)</span></td>
+<td>Prior for <span class="math inline">\(\Phi_{k,d}\)</span>.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(alpha_{k,d}\)</span></td>
+<td>Prior for <span class="math inline">\(\Theta_{k,d}\)</span>.</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="session-info" class="section level2">
 <h2>Session info</h2>
-<p>This vignette was created with</p>
+<p>This vignette was created with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
 <pre><code>## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
@@ -118,19 +375,25 @@ tidy_books &lt;-<span class="st"> </span>original_books %&gt;%
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] stringr_1.1.0     tidytext_0.1.1    janeaustenr_0.1.1 tidytopics_0.0.5 
-## [5] dplyr_0.5.0      
+## [1] testthat_1.0.2   ggplot2_2.1.0    dplyr_0.5.0      tidytext_0.1.1  
+## [5] tidytopics_0.0.6
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.7      knitr_1.14       magrittr_1.5     devtools_1.11.1 
-##  [5] mnormt_1.5-4     lattice_0.20-33  R6_2.1.3         plyr_1.8.4      
-##  [9] tools_3.3.0      parallel_3.3.0   grid_3.3.0       nlme_3.1-127    
-## [13] broom_0.4.1      checkmate_1.8.1  psych_1.6.6      simplify_0.1    
-## [17] DBI_0.4-1        withr_1.0.1      htmltools_0.3.5  lazyeval_0.2.0  
-## [21] yaml_2.1.13      assertthat_0.1   digest_0.6.10    tibble_1.2      
-## [25] Matrix_1.2-6     tidyr_0.5.1      reshape2_1.4.1   formatR_1.4     
-## [29] tokenizers_0.1.4 SnowballC_0.5.1  memoise_1.0.0    evaluate_0.10   
-## [33] rmarkdown_1.1    stringi_1.1.2    backports_1.0.3</code></pre>
+##  [1] Rcpp_0.12.7       formatR_1.4       plyr_1.8.4       
+##  [4] tokenizers_0.1.4  tools_3.3.0       digest_0.6.10    
+##  [7] memoise_1.0.0     evaluate_0.10     tibble_1.2       
+## [10] nlme_3.1-127      gtable_0.2.0      checkmate_1.8.1  
+## [13] lattice_0.20-33   Matrix_1.2-6      psych_1.6.6      
+## [16] DBI_0.4-1         yaml_2.1.13       parallel_3.3.0   
+## [19] janeaustenr_0.1.1 withr_1.0.1       stringr_1.1.0    
+## [22] knitr_1.14        devtools_1.11.1   grid_3.3.0       
+## [25] R6_2.1.3          rmarkdown_1.1     readr_1.0.0      
+## [28] reshape2_1.4.1    tidyr_0.6.0       magrittr_1.5     
+## [31] backports_1.0.3   scales_0.4.0      SnowballC_0.5.1  
+## [34] htmltools_0.3.5   assertthat_0.1    mnormt_1.5-4     
+## [37] colorspace_1.2-6  labeling_0.3      stringi_1.1.2    
+## [40] lazyeval_0.2.0    munsell_0.4.3     broom_0.4.1      
+## [43] crayon_1.3.2</code></pre>
 </div>
 
 

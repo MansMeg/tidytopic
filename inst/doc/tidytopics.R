@@ -13,7 +13,7 @@ sotu50
 is.tidy_topic_state(sotu50)
 
 ## ------------------------------------------------------------------------
-top_terms(sotu50)
+top_terms(sotu50, "type_probability")
 
 ## ------------------------------------------------------------------------
 nw <- topic_type_matrix(sotu50)
@@ -32,19 +32,13 @@ is.tidy_topic_matrix(nd)
 is.tidy_topic_array(nd)
 
 ## ------------------------------------------------------------------------
-setwd("../data-raw")
 nw <- as.sparseMatrix(nw)
 nw[1:10, 1:5]
-print(getwd())
-print(dir(getwd()))
-print(dir(getwd()))
-file.exists("sotu50.txt.gz")
 
 ## ---- echo=FALSE---------------------------------------------------------
-setwd("../data-raw")
-my_sotu <- read_mallet_statefile("sotu50.txt.gz")
-alpha <- read_mallet_statefile("sotu50.txt.gz", type = "alpha")
-beta <- read_mallet_statefile("sotu50.txt.gz", type = "beta")
+my_sotu <- read_mallet_statefile("../data-raw/sotu50.txt.gz")
+alpha <- read_mallet_statefile("../data-raw/sotu50.txt.gz", type = "alpha")
+beta <- read_mallet_statefile("../data-raw/sotu50.txt.gz", type = "beta")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  my_sotu <- read_mallet_statefile("sotu50.txt.gz")

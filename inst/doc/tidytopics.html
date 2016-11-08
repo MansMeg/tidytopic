@@ -12,7 +12,7 @@
 
 <meta name="author" content="Mans Magnusson" />
 
-<meta name="date" content="2016-11-07" />
+<meta name="date" content="2016-11-08" />
 
 <title>Introduction to the tidytopic package</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to the tidytopic package</h1>
 <h4 class="author"><em>Mans Magnusson</em></h4>
-<h4 class="date"><em>2016-11-07</em></h4>
+<h4 class="date"><em>2016-11-08</em></h4>
 
 
 <div id="TOC">
@@ -87,16 +87,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 
-<p>The tidytopics package is a toolkit for topic modeling and analysis in R. The main focus is to facilitate post-processing and analysis of topic models. It does not contain any samplers for topic models (right now).</p>
-<p>This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. For the notation used throughout this package, see the notation section below. It is built upon the ideas of data processing proposed in the <code>dplyr</code> package and the <code>tidytext</code> R package for text analysis.</p>
-<p>For <code>dplyr</code> a good introduction can be found <a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html">here</a> and a god cheetsheet can be found <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">here</a>. The package <code>tidytext</code> has a nice introduction <a href="https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html">here</a> and a nice book on tidy text mining can be found <a href="http://tidytextmining.com/">here</a>.</p>
+<p>The tidytopics package is a toolkit for topic modeling and analysis of topic models in R. The main focus is to facilitate pre-processing, post-processing and analysis of topic models. It does not contain any samplers for topic models (yet). For the topic model notation used throughout this package, see the notation section below.</p>
+<p>This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. This package is built upon the ideas of data processing proposed in the <code>dplyr</code> package and the <code>tidytext</code> R package for text analysis.</p>
+<p>For the <code>dplyr</code> package a good introduction can be found <a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html">here</a> and a god cheetsheet can be found <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">here</a>. The package <code>tidytext</code> has a nice introduction <a href="https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html">here</a> and a nice book on tidy text mining can be found <a href="http://tidytextmining.com/">here</a>.</p>
 <div id="vignettes" class="section level2">
 <h2>Vignettes</h2>
-<p>This package contains the following vignettes on topic modeling.</p>
+<p>This package contains the following vignettes on topic modeling analysis. Use <code>vignette()</code> to access the vignettes from R.</p>
+<ul>
+<li><strong>Bayesian Checking of Topic Models</strong></li>
+</ul>
 </div>
 <div id="basic-data-structures" class="section level2">
 <h2>Basic data structures</h2>
-<p>The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are three main data structures in tidytopics:</p>
+<p>The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in <code>tidyr</code>. So the following datastructures are <code>tibble</code> <code>data.frames</code> but with some restrictions on the content. There are three main data structures in tidytopics:</p>
 <table style="width:69%;">
 <colgroup>
 <col width="11%"></col>
@@ -115,11 +118,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 <tr class="even">
 <td><code>tidy_topic_array</code></td>
-<td>A tidy array (aggregation) of topic indicators. Must have the count variable <span class="math inline">\(n\)</span> and the integer variable <span class="math inline">\(topic\)</span></td>
+<td>A tidy array (aggregation) of topic indicators. Must have the count variable <code>n</code> and the integer variable <code>topic</code></td>
 </tr>
 <tr class="odd">
 <td><code>tidy_topic_matrix</code></td>
-<td>Same as <code>tidy_topic_array</code> but can only have one other variable</td>
+<td>Same as <code>tidy_topic_array</code> but can only have one other variable than <code>n</code> and <code>topic</code></td>
 </tr>
 </tbody>
 </table>
@@ -149,8 +152,8 @@ sotu50</code></pre></div>
 ## # ... with 680,937 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.tidy_topic_state</span>(sotu50)</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<p>Based on this topic model state we can do post processing analyses, such as the top terms per topic:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">top_terms</span>(sotu50)</code></pre></div>
+<p>Based on this topic model state we can easily do post-processing analyses, such as the top terms per topic.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">top_terms</span>(sotu50, <span class="st">&quot;type_probability&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 500 × 3
 ##          type topic type_probability
 ##        &lt;fctr&gt; &lt;int&gt;            &lt;dbl&gt;
@@ -165,6 +168,7 @@ sotu50</code></pre></div>
 ## 9     central     1       0.01721094
 ## 10    america     1       0.01632833
 ## # ... with 490 more rows</code></pre>
+<p>See <code>?top_terms</code> for other ways of</p>
 <p>We can also easily compute the type topic matrix <span class="math inline">\(n_w\)</span> or the document topic matrix <span class="math inline">\(n_d\)</span> in tidy format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nw &lt;-<span class="st"> </span><span class="kw">topic_type_matrix</span>(sotu50)
 nw</code></pre></div>
@@ -211,8 +215,7 @@ nd &lt;-<span class="st"> </span><span class="kw">left_join</span>(nd, sotu[,<sp
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.tidy_topic_array</span>(nd)</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>It is also possible to convert to and from a sparse matrix object from the <code>Matrix</code> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;../data-raw&quot;</span>)
-nw &lt;-<span class="st"> </span><span class="kw">as.sparseMatrix</span>(nw)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nw &lt;-<span class="st"> </span><span class="kw">as.sparseMatrix</span>(nw)
 nw[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <pre><code>## 10 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
 ##    fellow-citizens senate house representatives meeting
@@ -226,18 +229,6 @@ nw[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</spa
 ## 8                1      .     .               .       .
 ## 9                .      .     .               .       .
 ## 10              32      .     .              31      33</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">getwd</span>())</code></pre></div>
-<pre><code>## [1] &quot;/Users/manma97/Dropbox (Personlig)/Projekt/tidytopics/data-raw&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">dir</span>(<span class="kw">getwd</span>()))</code></pre></div>
-<pre><code>## [1] &quot;clean_data.R&quot;                     &quot;presidents.csv&quot;                  
-## [3] &quot;sotu50.txt.gz&quot;                    &quot;sotuspeaker.csv&quot;                 
-## [5] &quot;state_of_the_union_1790_2009.txt&quot; &quot;stats.txt&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">dir</span>(<span class="kw">getwd</span>()))</code></pre></div>
-<pre><code>## [1] &quot;clean_data.R&quot;                     &quot;presidents.csv&quot;                  
-## [3] &quot;sotu50.txt.gz&quot;                    &quot;sotuspeaker.csv&quot;                 
-## [5] &quot;state_of_the_union_1790_2009.txt&quot; &quot;stats.txt&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.exists</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>)</code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
 <p>For more analytical features see the other vignettes.</p>
 </div>
 </div>
@@ -375,25 +366,21 @@ beta &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] testthat_1.0.2   ggplot2_2.1.0    dplyr_0.5.0      tidytext_0.1.1  
-## [5] tidytopics_0.0.6
+## [1] stringr_1.1.0     janeaustenr_0.1.1 testthat_1.0.2    ggplot2_2.1.0    
+## [5] dplyr_0.5.0       tidytext_0.1.1    tidytopics_0.0.6 
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.7       formatR_1.4       plyr_1.8.4       
-##  [4] tokenizers_0.1.4  tools_3.3.0       digest_0.6.10    
-##  [7] memoise_1.0.0     evaluate_0.10     tibble_1.2       
-## [10] nlme_3.1-127      gtable_0.2.0      checkmate_1.8.1  
-## [13] lattice_0.20-33   Matrix_1.2-6      psych_1.6.6      
-## [16] DBI_0.4-1         yaml_2.1.13       parallel_3.3.0   
-## [19] janeaustenr_0.1.1 withr_1.0.1       stringr_1.1.0    
-## [22] knitr_1.14        devtools_1.11.1   grid_3.3.0       
-## [25] R6_2.1.3          rmarkdown_1.1     readr_1.0.0      
-## [28] reshape2_1.4.1    tidyr_0.6.0       magrittr_1.5     
-## [31] backports_1.0.3   scales_0.4.0      SnowballC_0.5.1  
-## [34] htmltools_0.3.5   assertthat_0.1    mnormt_1.5-4     
-## [37] colorspace_1.2-6  labeling_0.3      stringi_1.1.2    
-## [40] lazyeval_0.2.0    munsell_0.4.3     broom_0.4.1      
-## [43] crayon_1.3.2</code></pre>
+##  [1] Rcpp_0.12.7      formatR_1.4      plyr_1.8.4       tokenizers_0.1.4
+##  [5] tools_3.3.0      digest_0.6.10    memoise_1.0.0    evaluate_0.10   
+##  [9] tibble_1.2       nlme_3.1-127     gtable_0.2.0     checkmate_1.8.1 
+## [13] lattice_0.20-33  Matrix_1.2-6     psych_1.6.6      DBI_0.4-1       
+## [17] yaml_2.1.13      parallel_3.3.0   withr_1.0.1      knitr_1.14      
+## [21] devtools_1.11.1  grid_3.3.0       R6_2.1.3         rmarkdown_1.1   
+## [25] readr_1.0.0      reshape2_1.4.1   tidyr_0.6.0      magrittr_1.5    
+## [29] backports_1.0.3  scales_0.4.0     SnowballC_0.5.1  htmltools_0.3.5 
+## [33] assertthat_0.1   mnormt_1.5-4     colorspace_1.2-6 labeling_0.3    
+## [37] stringi_1.1.2    lazyeval_0.2.0   munsell_0.4.3    broom_0.4.1     
+## [41] crayon_1.3.2</code></pre>
 </div>
 
 

@@ -75,7 +75,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="TOC">
 <ul>
-<li><a href="#vignettes">Vignettes</a></li>
+<li><a href="#vignettes">Vignettes</a><ul>
+<li><a href="#included-datasets">Included datasets</a></li>
+</ul></li>
 <li><a href="#basic-data-structures">Basic data structures</a><ul>
 <li><a href="#example">Example</a></li>
 </ul></li>
@@ -87,15 +89,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 
-<p>The tidytopics package is a toolkit for topic modeling and analysis of topic models in R. The main focus is to facilitate pre-processing, post-processing and analysis of topic models. It does not contain any samplers for topic models (yet). For the topic model notation used throughout this package, see the notation section below.</p>
+<p>The tidytopics package is a toolkit for topic modeling and analysis of topic models in R. The main focus is to facilitate pre-processing, post-processing and analysis of topic models for both practictioners and researchers. It does not contain any samplers for topic models (yet). For the topic model notation used throughout this package, see the notation section below.</p>
 <p>This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. This package is built upon the ideas of data processing proposed in the <code>dplyr</code> package and the <code>tidytext</code> R package for text analysis.</p>
 <p>For the <code>dplyr</code> package a good introduction can be found <a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html">here</a> and a god cheetsheet can be found <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">here</a>. The package <code>tidytext</code> has a nice introduction <a href="https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html">here</a> and a nice book on tidy text mining can be found <a href="http://tidytextmining.com/">here</a>.</p>
 <div id="vignettes" class="section level2">
 <h2>Vignettes</h2>
 <p>This package contains the following vignettes on topic modeling analysis. Use <code>vignette()</code> to access the vignettes from R.</p>
 <ul>
-<li><strong>Bayesian Checking of Topic Models</strong></li>
+<li><strong>Bayesian Checking of Topic Models</strong>: <code>vignette(&quot;bayesian_checking&quot;)</code></li>
 </ul>
+<div id="included-datasets" class="section level3">
+<h3>Included datasets</h3>
+<p>The package contain datasets that can be accessed with <code>data([dataset name])</code>. Use <code>?[dataset name]</code> to get more information on each dataset and <code>data(package=&quot;tidytopics&quot;)</code> to see a list of the datasets.</p>
+</div>
 </div>
 <div id="basic-data-structures" class="section level2">
 <h2>Basic data structures</h2>
@@ -168,8 +174,8 @@ sotu50</code></pre></div>
 ## 9     central     1       0.01721094
 ## 10    america     1       0.01632833
 ## # ... with 490 more rows</code></pre>
-<p>See <code>?top_terms</code> for other ways of</p>
-<p>We can also easily compute the type topic matrix <span class="math inline">\(n_w\)</span> or the document topic matrix <span class="math inline">\(n_d\)</span> in tidy format.</p>
+<p>See <code>?top_terms</code> for other ways of choosing terms to represent a topic.</p>
+<p>We can also easily compute the type topic matrix <span class="math inline">\(n_w\)</span> or the document topic matrix <span class="math inline">\(n_d\)</span> in a tidy format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nw &lt;-<span class="st"> </span><span class="kw">topic_type_matrix</span>(sotu50)
 nw</code></pre></div>
 <pre><code>## # A tibble: 56,549 × 3
@@ -238,25 +244,25 @@ nw[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</spa
 <div id="mallet-state-files" class="section level3">
 <h3>Mallet state files</h3>
 <p>Currently the package handles importing of state files from Mallet. To fit a model with mallet see the <a href="http://mallet.cs.umass.edu/">hompage</a> or use the R package <a href="https://github.com/mimno/RMallet">mallet</a> to fit a model. An introduction to fit a topic model with R can be found <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/mimno/RMallet/master/mallet/inst/doc/mallet.html">here</a>.</p>
-<p>The following mallet state file is not a part of this package (due to the size of the file). But to run this code you can download the file <a href="https://github.com/MansMeg/tidytopics/raw/master/data-raw/sotu50.txt.gz">here</a>.</p>
-<p>The statefile contain the topic indicatorstates, and the hyperparameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
+<p>The following mallet state file is not a part of this package (due to the size of the file ~8 Mb). But to run this code you can download the file <a href="https://github.com/MansMeg/tidytopics/raw/master/data-raw/sotu50.txt.gz">here</a>.</p>
+<p>The statefile contain the topic indicator states and the hyperparameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_sotu &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>)
 alpha &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;alpha&quot;</span>)
 beta &lt;-<span class="st"> </span><span class="kw">read_mallet_statefile</span>(<span class="st">&quot;sotu50.txt.gz&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;beta&quot;</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_sotu</code></pre></div>
-<pre><code>## # A tibble: 680,947 × 4
-##      doc   pos            type topic
-##    &lt;int&gt; &lt;int&gt;          &lt;fctr&gt; &lt;int&gt;
-## 1      1     1 fellow-citizens    11
-## 2      1     2          senate    11
-## 3      1     3           house    11
-## 4      1     4 representatives    11
-## 5      2     1         meeting    10
-## 6      2     2            feel    33
-## 7      2     3    satisfaction    10
-## 8      2     4          repeat    10
-## 9      2     5 congratulations    33
-## 10     2     6       favorable    10
+<pre><code>## # A tibble: 680,947 × 3
+##      doc            type topic
+##    &lt;int&gt;          &lt;fctr&gt; &lt;int&gt;
+## 1      1 fellow-citizens    11
+## 2      1          senate    11
+## 3      1           house    11
+## 4      1 representatives    11
+## 5      2         meeting    10
+## 6      2            feel    33
+## 7      2    satisfaction    10
+## 8      2          repeat    10
+## 9      2 congratulations    33
+## 10     2       favorable    10
 ## # ... with 680,937 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">alpha[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <pre><code>## [1] 0.02136692 0.01317826 0.03399012 0.04877238 0.05565182</code></pre>

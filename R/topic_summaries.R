@@ -52,6 +52,7 @@ top_terms <- function(x, scheme = "type_probability", j = 10, beta = 0, ...){
   x <- term_weight(x, beta, ...)
   x <- top_j_types(x, j)
   names(x)[which(names(x) == "p")] <- scheme
+  x <- dplyr::transmute_(x, .dots = c("type", "topic", scheme))
   x
 }
 

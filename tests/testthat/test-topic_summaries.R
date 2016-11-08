@@ -46,7 +46,7 @@ test_that(desc="reweighting methods / api",{
   expect_silent(tp2 <- top_terms(sotu50, "type_probability", j))
   expect_identical(tp1, tp2)
   expect_equal(nrow(tp1), j * K)
-  expect_equal(ncol(tp), 3)
+  expect_equal(ncol(tp1), 3)
 
   expect_silent(tp <- top_terms(ttm, "topic_probability", j))
   expect_equal(nrow(tp), j * K)
@@ -93,7 +93,7 @@ test_that(desc="Warn. for duplicates",{
   topr <- top_terms(ttm, "topic_probability", 100000, beta = 0.01)
   
 
-  extra_row <- ttm2[72,]
+  extra_row <- ttm[72,]
   extra_row_plus <- extra_row
   extra_row_plus$n <- extra_row_plus$n + 3L
   

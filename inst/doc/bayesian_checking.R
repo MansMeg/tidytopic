@@ -1,7 +1,7 @@
 ## ---- echo=FALSE---------------------------------------------------------
 # Should the full vignette be run or a fast version.
 # The full version run all code and store the results to run faster later.
-run_full_vignette <- FALSE
+run_full_vignette <- TRUE # This is false to speed up checking etc
 
 ## ------------------------------------------------------------------------
 library(tidytopics)

@@ -19,6 +19,7 @@ Suggests:
   tidytext,
   tidyr,
   rmarkdown,
+  janeaustenr,
   readr,
   Matrix,
   stringr

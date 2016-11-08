@@ -20,6 +20,7 @@ Suggests:
   tidyr,
   rmarkdown,
   janeaustenr,
+  ggplot2,
   readr,
   Matrix,
   stringr

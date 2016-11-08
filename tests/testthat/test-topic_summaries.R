@@ -85,7 +85,7 @@ test_that(desc="adding extra variables do not fail / api",{
 
 
 test_that(desc="Warn. for duplicates",{
-  
+  skip_on_travis()
   j <- 5
   K <- length(unique(sotu50$topic))
   tp <- top_terms(ttm, "n_wk", 100000)

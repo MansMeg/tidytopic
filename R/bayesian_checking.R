@@ -15,6 +15,7 @@
 imi <- function(state, g = "doc", w=NULL){
   checkmate::assert(is.tidy_topic_state(state))
   checkmate::assert_choice(g, names(state))
+  checkmate::assert_choice(class(state[[g]]), c("integer", "factor", "character"))
   checkmate::assert(checkmate::check_class(w, "tbl_df"),
                     checkmate::check_character(w, null.ok = TRUE))
   checkmate::assert(!is.grouped_df(w))
@@ -65,7 +66,7 @@ imi <- function(state, g = "doc", w=NULL){
 mi <- function(state, g = "doc"){
   checkmate::assert(is.tidy_topic_state(state))
   checkmate::assert_choice(g, names(state))
-  
+  checkmate::assert_choice(class(state[[g]]), c("integer", "factor", "character"))
   eval(parse(text=paste0("state <- dplyr::transmute(state, doc = as.integer(", g ,"), type, topic)")))
   state <- dplyr::transmute(state, topic, doc, type)
   

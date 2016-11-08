@@ -4,6 +4,7 @@ test_that(desc="TODO",{
   skip("just a todo")
   expect_true(FALSE, info = "Fix manual calculated tests for mi, imi, goup_imi and group mi")
   expect_true(FALSE, info = "fix sample_types_given_topic example")
+  expect_true(FALSE, info = "fix vanilla LDA vignette - remove janeausten dependency")
   expect_true(FALSE, info = "fix examples everywhere")
   expect_true(FALSE, info = "check out of array potential error in sampler - R. This is the only potential for out of array errors")
   expect_true(FALSE, info = "fix all TODO in documentation")

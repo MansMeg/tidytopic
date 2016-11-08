@@ -2,7 +2,9 @@
 title: "Bayesian Checking of topic models"
 author: "Mans Magnusson"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: TRUE
 vignette: >
   %\VignetteIndexEntry{tidytopics}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,8 +18,10 @@ Bayesian checking of topic models has been proposed by Mimno and Blei (2011) as 
 We start out by loading a trained topic model with 50 topics on the State of the Union Addresses.
 
 ```{r}
+library(tidytopics)
+library(dplyr)
 library(ggplot2)
-data("sotu50")
+data(sotu50)
 sotu50
 ```
 

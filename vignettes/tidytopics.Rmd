@@ -11,28 +11,27 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The tidytopics package is a toolkit for topic modeling and analysis in R. The main focus is to facilitate post-processing and analysis of topic models. It does not contain any samplers for topic models (right now). 
+The tidytopics package is a toolkit for topic modeling and analysis of topic models in R. The main focus is to facilitate pre-processing, post-processing and analysis of topic models. It does not contain any samplers for topic models (yet). For the topic model notation used throughout this package, see the notation section below.
 
-This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. For the notation used throughout this package, see the notation section below. It is built upon the ideas of data processing proposed in the `dplyr` package and the `tidytext` R package for text analysis. 
+This is a short introduction to the package, the (tidy) data structures and some basic functionalities implemented so far. This package is built upon the ideas of data processing proposed in the `dplyr` package and the `tidytext` R package for text analysis. 
 
-For `dplyr` a good introduction can be found [here](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) and a god cheetsheet can be found [here](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf). The package `tidytext` has a nice introduction [here](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html) and a nice book on tidy text mining can be found [here](http://tidytextmining.com/).
+For the `dplyr` package a good introduction can be found [here](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) and a god cheetsheet can be found [here](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf). The package `tidytext` has a nice introduction [here](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html) and a nice book on tidy text mining can be found [here](http://tidytextmining.com/).
 
 ## Vignettes
 
-This package contains the following vignettes on topic modeling.
+This package contains the following vignettes on topic modeling analysis. Use `vignette()` to access the vignettes from R. 
 
 - **Bayesian Checking of Topic Models**
 
-
 ## Basic data structures
 
-The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in tidyr. There are three main data structures in tidytopics: 
+The datastructures in tidytopics is based on the same tidy data structure proposed by Hadley Wickham in `tidyr`. So the following datastructures are `tibble` `data.frames` but with some restrictions on the content. There are three main data structures in tidytopics: 
 
 | Symbol| Description                             |
 |-------|-----------------------------------------|
 | `tidy_topic_state`  | A topic model token level state (of topic indicators $z$) |
-| `tidy_topic_array`  | A tidy array (aggregation) of topic indicators. Must have the count variable $n$ and the integer variable $topic$ |
-| `tidy_topic_matrix`  | Same as `tidy_topic_array` but can only have one other variable |
+| `tidy_topic_array`  | A tidy array (aggregation) of topic indicators. Must have the count variable `n` and the integer variable `topic` |
+| `tidy_topic_matrix`  | Same as `tidy_topic_array` but can only have one other variable than `n` and `topic` |
 
 The purpose is to have a way of handling the often very large corpuses in a simple and effective way and make use of the sparsity for topic model analysis.
 
@@ -56,11 +55,13 @@ sotu50
 is.tidy_topic_state(sotu50)
 ```
 
-Based on this topic model state we can do post processing analyses, such as the top terms per topic:
+Based on this topic model state we can easily do post-processing analyses, such as the top terms per topic.
 
 ```{r}
-top_terms(sotu50)
+top_terms(sotu50, "type_probability")
 ```
+
+See `?top_terms` for other ways of 
 
 We can also easily compute the type topic matrix $n_w$ or the document topic matrix $n_d$ in tidy format.
 

@@ -16,8 +16,7 @@ library("tidytopics")
 
 ### Tutorials
 
-Tutorials will be included shortly.
-
+An introduction to the tidytopics R package can be found [here](https://htmlpreview.github.io/?https://github.com/MansMeg/tidytopics/blob/master/inst/doc/tidytopics.html).
 
 ## Reporting bugs
 
